@@ -1,15 +1,24 @@
 /// <summary>
 /// Signature enemy: personally weak, makes Goliaths remember the catalog.
+/// Window is a [Property] so design can retune without a code edit.
+/// Tint live-updates go through SliceTints so they cannot drift from spawn.
 /// </summary>
 public sealed class SancientDirector : Component
 {
-	[Property] public float LoudnessThreshold { get; set; } = 28f;
+	[Property] public float LoudnessThreshold { get; set; } = 8f;
 	[Property] public float WindowSeconds { get; set; } = 25f;
-	[Property] public float EarliestTimeRemaining { get; set; } = 12f * 60f;
+	[Property] public float EarliestTimeRemaining { get; set; } = 14f * 60f;
 
 	[Sync( SyncFlags.FromHost )] public bool WindowOpen { get; set; }
 	float _windowLeft;
 	bool _fired;
+
+	protected override void OnStart()
+	{
+		var renderer = Components.Get<ModelRenderer>();
+		if ( renderer is not null )
+			renderer.Tint = SliceTints.SancientTint;
+	}
 
 	protected override void OnFixedUpdate()
 	{
@@ -47,7 +56,10 @@ public sealed class SancientDirector : Component
 		_windowLeft = WindowSeconds;
 		director.SancientActive = true;
 		foreach ( var g in Scene.GetAllComponents<Goliath>() )
+		{
 			g.SetPuppeted( true );
+			Tint( g, SliceTints.GoliathPuppetTint );
+		}
 		Log.Info( "[SkyNeet] Sancient on the net. They remember." );
 	}
 
@@ -56,7 +68,17 @@ public sealed class SancientDirector : Component
 		WindowOpen = false;
 		director.SancientActive = false;
 		foreach ( var g in Scene.GetAllComponents<Goliath>() )
+		{
 			g.SetPuppeted( false );
+			Tint( g, SliceTints.GoliathTint );
+		}
 		Log.Info( "[SkyNeet] Sancient window closed. The catalog sleeps again." );
+	}
+
+	static void Tint( Goliath goliath, Color tint )
+	{
+		var renderer = goliath.Components.Get<ModelRenderer>();
+		if ( renderer is not null )
+			renderer.Tint = tint;
 	}
 }
