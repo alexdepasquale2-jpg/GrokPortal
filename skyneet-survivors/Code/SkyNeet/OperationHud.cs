@@ -2,6 +2,8 @@ using Sandbox.UI;
 
 /// <summary>
 /// Screen HUD without Razor. Razor codegen was a separate class, so markup could not see C# members and the engine failed to boot.
+/// Task 4: dread line when standing on the unplanted node.
+/// Task 6: THEY REMEMBER while the Sancient window is open.
 /// </summary>
 public sealed class OperationHud : PanelComponent
 {
@@ -36,13 +38,33 @@ public sealed class OperationHud : PanelComponent
 		var t = MathF.Max( d.TimeLeft, 0f );
 		var clock = $"{(int)(t / 60):00}:{(int)(t % 60):00}";
 		var node = d.NodeUp ? "ONLINE" : "DARK";
-		var sancient = d.SancientActive ? "SANCIENT AWAKE" : "";
+		var sancient = d.SancientActive ? "SANCIENT  THEY REMEMBER" : "";
 		var ended = d.OperationEnded ? $"ENDED {d.EndReason}" : "";
+		var dread = DreadLine( d );
 
 		_body.Text =
 			$"SKYNEET  {clock}  |  SCRAP {d.Scrap}\n" +
 			$"NNN {node}  LOUD {d.Loudness:0.0}  {sancient}\n" +
 			$"OWNER {d.SiteOwner}  {ended}\n" +
-			"E: plant NNN / raise fort   extract: hold the dark pad";
+			"E: plant NNN / raise fort   extract: hold the dark pad" +
+			dread;
+	}
+
+	string DreadLine( OperationDirector director )
+	{
+		if ( director.NodeUp || director.OperationEnded )
+			return "";
+
+		var player = Scene.GetAllComponents<PlayerController>().FirstOrDefault();
+		if ( player is null )
+			return "";
+
+		foreach ( var node in Scene.GetAllComponents<NeetNetNode>() )
+		{
+			if ( node.ShouldPromptPlant( player.WorldPosition ) )
+				return "\nHOLD E — WAKE THE HOLE";
+		}
+
+		return "";
 	}
 }
