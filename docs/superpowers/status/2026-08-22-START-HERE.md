@@ -4,11 +4,13 @@
 reports 0 commits missing from it. No open PRs.
 `feat/skyneet-survivors-design` is kept at the same commit as the historical design branch.
 
-**Status in one line:** Tasks 1–7 are code-complete and **not one line has ever been
-compiled or played**. Every remaining step needs the s&box editor on your PC.
+**Status in one line:** Tasks 1–7 are code-complete and **the editor compiles clean**.
+Nothing has been *played* yet. The remaining steps are the playtest, and they need hands on
+the editor.
 
 Three agents worked this: Claude and Cursor (both cloud, no editor access), and Grok (had
-the editor, pushed nothing, hit its limits). The earlier status docs address Grok directly
+the editor, pushed nothing, hit its limits). **Grok and Cursor are now disabled; development
+is Claude Code solo.** The file-ownership protocol they shared is retired. The earlier status docs address Grok directly
 and are now historical — `2026-08-22-verification-queue.md`,
 `2026-08-22-cursor-verification.md`, `2026-08-22-grok-compile-this.md`. Their technical
 content is still accurate; their "Grok: please run…" framing is void. This file supersedes
@@ -58,25 +60,11 @@ wanted back later, the real attribute name has to come from the editor's API bro
 
 ## Tomorrow, in this order
 
-1. **Open the editor** on `skyneet-survivors/` (or the junction at
-   `Documents\s&box projects\skyneet_survivors`) — **not** the repo root.
-2. **`compile_status`.** This is the only command that matters. Everything below is
-   guesswork until it runs.
-3. **If `Editor/` is red**, delete in this order, recompiling between each. An assembly
-   compiles as one unit, so one bad file takes out all editor tooling including Task 2's
-   test menu. Nothing in `Code/` depends on any of these.
-   1. `Editor/SkyNeetPlayMcp.cs` — isolates `Game.ActiveScene`, the least-proven call, and
-      it lives only here. Costs `operation_snapshot`.
-   2. `Editor/SkyNeetMcp.cs` + `Editor/SkyNeetLogicMcp.cs` + `Editor/SkyNeetTask8Menu.cs` —
-      isolates `[McpToolset]` / `[McpTool.ReadOnly]` syntax, unproven and shared by all of
-      them. Costs `slice_checklist`, `run_logic_tests`, the Task 8 menu.
-   3. `SkyNeetLogicTests.cs` uses only `[Menu]` and should survive both steps, so Task 2
-      stays verifiable from the editor menu.
-4. **If `Code/` is red**, the three unproven things are all in spawn/tint code:
-   `new Color( r, g, b )` and `new Color( r, g, b, a )`, `Color.Red` / `Color.Yellow`, and
-   `ModelRenderer.Tint`. `Color.Black` / `Color.White` are already proven by the booting
-   HUD, so named colours are the fallback if the float constructor is wrong.
-   All of it is in `SliceTints.cs` — one file, nine lines to change.
+1. ~~**Open the editor**~~ — done.
+2. ~~**`compile_status`**~~ — done, and green after step 3 below.
+3. ~~**Editor red**~~ — resolved. The three `[McpToolset]` files were deleted; see the
+   compile-result section above. Both `[Menu]` files survived.
+4. ~~**`Code/` red**~~ — never happened. `Code/` compiled clean on the first try.
 5. **`SkyNeet / Run Logic Tests`** → PASS.
 6. **Play the three ends** — extract, death, clock. Then the occupancy roundtrip: die with
    NNN up, stop, replay, and confirm the red fort is standing and the HUD says
@@ -111,7 +99,10 @@ leave it tracked. Not deleted here — that could not be tested from a cloud ses
 ## The honest caveat
 
 Roughly 20 commits of C# were written by two agents that could not compile a single line of
-it. The logic was reviewed hard — against the spec, against `cavern.scene`, and against the
-merged tree, which is where the last two real bugs were caught — but *reviewed* is not
-*run*. Expect the first compile to find things. That is the cost of the setup, not a
-surprise.
+it. The first compile found exactly one class of problem — the speculative MCP attributes —
+and all 18 game components in `Code/` built clean. So the *compiler* is satisfied.
+
+Nothing has been **played**. Compiling proves the API calls exist; it proves nothing about
+whether Goliaths path sensibly, whether the fort blocks what it should, whether the tints
+read at top-down distance, or whether any of the five pillars land. That is what Task 8 is
+for, and it is still ahead.
