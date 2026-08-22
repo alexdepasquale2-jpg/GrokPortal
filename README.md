@@ -23,4 +23,7 @@ The s&box project lives in [`skyneet-survivors/`](skyneet-survivors/). Open **th
 
 ## Branch
 
-`feat/skyneet-survivors-design`
+`main` — default and the trunk everything lands on.
+
+`feat/skyneet-survivors-design` is the historical design/implementation branch and is kept
+at the same commit; it is no longer where work should start.

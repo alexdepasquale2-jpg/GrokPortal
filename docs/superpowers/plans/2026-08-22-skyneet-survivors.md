@@ -22,7 +22,7 @@
 - Economy in slice/v1: **scrap only**. Flavor tags: telemetry only.
 - Slice camera: top-down only. Pawn may be camera-ready; do not ship three combat games in Phase 1.
 - Verify every task: s&box editor compile (0 errors) + the task's play/log check. MCP tools: `compile_status`, `play_start`, `play_stop`, `list_scenes`, `scene_tree`, `camera_screenshot`.
-- Git branch: `feat/skyneet-survivors-design`. Commit per task. Do not commit `.sbox/`, `*.csproj`, `*.sln`, `*_c`.
+- Git branch: `main` (default; `feat/skyneet-survivors-design` was the original and is kept in sync). Commit per task. Do not commit `.sbox/`, `*.csproj`, `*.sln`, `*_c`.
 - Fun pillars: greed, dread, power, panic, consequence. If a change hits none, drop it.
 
 ## MCP (every agent)

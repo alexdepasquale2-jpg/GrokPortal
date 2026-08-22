@@ -1,7 +1,8 @@
 # START HERE — SkyNeet slice handoff (2026-08-22, end of agent session)
 
-**Branch:** `feat/skyneet-survivors-design` @ `25e0fcf`. Everything is on it. All other
-branches report 0 commits missing from it. No open PRs.
+**Branch:** `main` — the default and the trunk. Everything is on it, and every other branch
+reports 0 commits missing from it. No open PRs.
+`feat/skyneet-survivors-design` is kept at the same commit as the historical design branch.
 
 **Status in one line:** Tasks 1–7 are code-complete and **not one line has ever been
 compiled or played**. Every remaining step needs the s&box editor on your PC.
