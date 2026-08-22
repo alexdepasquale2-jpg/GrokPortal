@@ -10,14 +10,14 @@ public sealed class OperationDirector : Component
 	[Property] public float StormSeconds { get; set; } = 15f * 60f;
 	[Property] public int StartingScrap { get; set; } = 0;
 
-	[HostSync] public float TimeLeft { get; set; }
-	[HostSync] public bool NodeUp { get; set; }
-	[HostSync] public float Loudness { get; set; }
-	[HostSync] public bool SancientActive { get; set; }
-	[HostSync] public bool OperationEnded { get; set; }
-	[HostSync] public string EndReason { get; set; } = "";
-	[HostSync] public string SiteOwner { get; set; } = "Neet";
-	[HostSync] public int Scrap { get; set; }
+	[Sync( SyncFlags.FromHost )] public float TimeLeft { get; set; }
+	[Sync( SyncFlags.FromHost )] public bool NodeUp { get; set; }
+	[Sync( SyncFlags.FromHost )] public float Loudness { get; set; }
+	[Sync( SyncFlags.FromHost )] public bool SancientActive { get; set; }
+	[Sync( SyncFlags.FromHost )] public bool OperationEnded { get; set; }
+	[Sync( SyncFlags.FromHost )] public string EndReason { get; set; } = "";
+	[Sync( SyncFlags.FromHost )] public string SiteOwner { get; set; } = "Neet";
+	[Sync( SyncFlags.FromHost )] public int Scrap { get; set; }
 
 	public CampaignSave LastSave { get; private set; }
 

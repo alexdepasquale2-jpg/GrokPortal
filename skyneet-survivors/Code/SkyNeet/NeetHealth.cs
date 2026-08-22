@@ -1,7 +1,7 @@
 public sealed class NeetHealth : Component
 {
 	[Property] public float MaxHealth { get; set; } = 100f;
-	[HostSync] public float Health { get; set; } = 100f;
+	[Sync( SyncFlags.FromHost )] public float Health { get; set; } = 100f;
 
 	public bool IsDead => Health <= 0f;
 

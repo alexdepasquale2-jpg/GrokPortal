@@ -5,7 +5,7 @@ public sealed class FortGhost : Component
 {
 	[Property] public int ScrapCost { get; set; } = 20;
 	[Property] public float UseRange { get; set; } = 90f;
-	[HostSync] public bool Solid { get; set; }
+	[Sync( SyncFlags.FromHost )] public bool Solid { get; set; }
 
 	protected override void OnUpdate()
 	{

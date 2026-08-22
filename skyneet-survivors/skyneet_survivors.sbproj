@@ -2,7 +2,7 @@
   "Title": "SkyNeet Survivors",
   "Type": "game",
   "Org": "local",
-  "Ident": "skyneet.survivors",
+  "Ident": "skyneet_survivors",
   "Schema": 1,
   "IncludeSourceFiles": false,
   "Resources": null,

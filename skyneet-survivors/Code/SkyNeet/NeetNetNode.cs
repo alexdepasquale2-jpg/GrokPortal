@@ -4,7 +4,7 @@
 public sealed class NeetNetNode : Component
 {
 	[Property] public float UseRange { get; set; } = 80f;
-	[HostSync] public bool Planted { get; set; }
+	[Sync( SyncFlags.FromHost )] public bool Planted { get; set; }
 
 	OperationDirector Director => Scene.GetAllComponents<OperationDirector>().FirstOrDefault();
 

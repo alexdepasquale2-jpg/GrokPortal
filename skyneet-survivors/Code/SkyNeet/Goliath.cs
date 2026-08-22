@@ -9,9 +9,9 @@ public sealed class Goliath : Component
 	[Property] public float AttackInterval { get; set; } = 1.2f;
 
 	[Property] public float MaxHealth { get; set; } = 80f;
-	[HostSync] public float Health { get; set; }
-	[HostSync] public float Competence { get; set; }
-	[HostSync] public bool Puppeted { get; set; }
+	[Sync( SyncFlags.FromHost )] public float Health { get; set; }
+	[Sync( SyncFlags.FromHost )] public float Competence { get; set; }
+	[Sync( SyncFlags.FromHost )] public bool Puppeted { get; set; }
 
 	float _attackCd;
 	float _baseCompetence;

@@ -7,7 +7,7 @@ public sealed class SancientDirector : Component
 	[Property] public float WindowSeconds { get; set; } = 25f;
 	[Property] public float EarliestTimeRemaining { get; set; } = 12f * 60f;
 
-	[HostSync] public bool WindowOpen { get; set; }
+	[Sync( SyncFlags.FromHost )] public bool WindowOpen { get; set; }
 	float _windowLeft;
 	bool _fired;
 
