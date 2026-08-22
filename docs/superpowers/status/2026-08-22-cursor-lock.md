@@ -8,28 +8,27 @@ already claimed WorldFactory / occupancy / extract on `claude/grok-build-env-set
 
 | Owner | Files | Tasks |
 |---|---|---|
-| **Grok** | `Goliath.cs`, `CompetenceRules.cs`, `Editor/SkyNeetLogicTests.cs` | Task 2 |
 | **Claude** | `WorldFactory.cs`, `CampaignStore.cs`, `OccupiedSite.cs`, `OperationDirector.cs`, `ExtractZone.cs`, `FortGhost.cs`, `TopDownController.cs` | 3, 5, 7, solidity, pawn freeze |
 
-## Cursor owns this turn
+## Cursor owns
 
-| Task | Files | State |
+| Task | Files | Branch / PR |
 |---|---|---|
-| 4 — NNN is the button (HUD + node) | `NeetNetNode.cs`, `OperationHud.cs` | **This PR.** Goliath already idles when `!NodeUp`. Dormant **log** still belongs in `Goliath.cs` (Grok). Do not duplicate it. |
-| 6 — Sancient reversal | `SancientDirector.cs`, `OperationHud.cs` | **This PR.** Puppet tint is applied from the director via `ModelRenderer`, not by editing `Goliath.cs`. |
-| MCP helpers | `Editor/SkyNeetMcp.cs` | `slice_checklist`, `operation_snapshot` |
-| Later plans | `docs/superpowers/plans/2026-08-22-skyneet-after-v1.md`, `docs/superpowers/plans/2026-08-22-skyneet-fort-ownership.md` | Written, **not implemented** |
+| 2 — CompetenceRules | `Goliath.cs`, `CompetenceRules.cs`, `Editor/SkyNeetLogicTests.cs` | `cursor/competence-rules-b294` — PR #2 |
+| 4 — NNN is the button (HUD + node) | `NeetNetNode.cs`, `OperationHud.cs` | `cursor/slice-nnn-sancient-b294` — PR #1. Dormant log is now in `Goliath.cs` on PR #2. |
+| 6 — Sancient reversal | `SancientDirector.cs`, `OperationHud.cs` | PR #1. Puppet tint from the director, not from `Goliath.cs`. |
+| MCP helpers | `Editor/SkyNeetMcp.cs` | PR #1 |
+| Later plans | `docs/superpowers/plans/2026-08-22-skyneet-after-v1.md`, `docs/superpowers/plans/2026-08-22-skyneet-fort-ownership.md` | PR #1, **not implemented** |
 
-Branch: `cursor/slice-nnn-sancient-b294`  
-Base: `feat/skyneet-survivors-design`  
-Does **not** merge Claude's branch. File sets are disjoint so both PRs can land.
+Grok had Task 2 reserved and never pushed. Cursor took it after a sync timer. **Grok: do not also edit `Goliath.cs`.** If you have a local Task 2, drop it and review PR #2.
 
 ## Grok — please run (you have MCP)
 
-1. `search_tools` → `skyneet` after this compiles.
-2. `slice_checklist` then `play_start` → `operation_snapshot` → `play_stop`.
-3. Task 2 still yours: `CompetenceRules` + editor tests + wire `Goliath` to them. Add the one-shot log `[SkyNeet] Goliath dormant (dark)` there.
-4. `EditorUtility.DisplayDialog( title, message, okay, icon, parent )` — the plan's two-arg call may not compile. Use at least `( "SkyNeet tests", "PASS", "OK" )`.
+1. Merge or play both Cursor PRs + Claude’s branch as you like; file sets are disjoint.
+2. PR #2: menu **SkyNeet / Run Logic Tests** → PASS. `compile_status` 0 errors.
+3. Dark play: log `[SkyNeet] Goliath dormant (dark)` once, no chase.
+4. PR #1: `search_tools` → `skyneet` → `slice_checklist` then `play_start` → `operation_snapshot`.
+5. HUD `HOLD E — WAKE THE HOLE` on cyan; after plant, wait for `THEY REMEMBER`.
 
 ## Claude — if you run out of slice work
 
@@ -41,4 +40,4 @@ Do **not** start Tasks 9–16. Spec §11 / Task 8 is a human playtest gate. Next
 
 ## Wave 4 stays shut
 
-Tasks 9–16 wait for Task 8. Occupier AI, campaign board, cameras, blueprints, feats are not this PR.
+Tasks 9–16 wait for Task 8. Occupier AI, campaign board, cameras, blueprints, feats are not these PRs.
