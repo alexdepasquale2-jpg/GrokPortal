@@ -36,7 +36,7 @@ public static class SkyNeetPlayMcp
 		var goliaths = scene.GetAllComponents<Goliath>()
 			.Select( g =>
 			{
-				var renderer = g.Components.Get<ModelRenderer>();
+				var renderer = g.GameObject.Components.Get<ModelRenderer>();
 				return new
 				{
 					Name = g.GameObject.Name,

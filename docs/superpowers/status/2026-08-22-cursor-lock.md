@@ -18,4 +18,5 @@ Cursor PRs #1 and #2 stay open for bisection. Do not rewrite files Claude alread
 
 ## Wave 4 stays shut
 
-Tasks 9–16 wait for Task 8.
+Tasks 9–16 wait for Task 8. Playbook: `docs/superpowers/plans/2026-08-22-skyneet-task8-playtest.md`.
+Editor menu **SkyNeet / Print Task 8 Script** (no MCP attributes).
