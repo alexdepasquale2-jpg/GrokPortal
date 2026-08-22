@@ -47,12 +47,17 @@ After C# edits: `compile_status`. To smoke a loop: `play_start` → screenshot /
 
 Do **not** install community WebSocket MCP bridges.
 
-**Custom MCP tools: `[McpTool]` and `[McpToolset]` do not exist in this s&box build.**
-Three files using them were written on 2026-08-22 and produced the only red build of the
-session — nine `CS0246`s, `McpToolsetAttribute` / `McpToolset` / `McpTool` not found. They
-were deleted. Do not re-add them from this file's earlier advice, from the s&box docs, or
-from a web search: confirm the real attribute in the editor's API browser or `TypeLibrary`
-**first**, because you cannot compile-check it from a cloud session.
+**Custom MCP tools are possible, but `[McpToolset]` / `[McpTool.ReadOnly]` are the wrong
+names.** Three files using that syntax were written on 2026-08-22 and produced the only red
+build of the session — nine `CS0246`s, `McpToolsetAttribute` / `McpToolset` / `McpTool` not
+found — and were deleted.
+
+They are not impossible, though: Grok registered a working custom tool,
+`skyneet_run_logic_tests`, and called it successfully twice (its own tools appear as
+`mcp_*`). A working example therefore exists in Grok's unpushed checkout at
+`C:\Users\Albert\GrokPortal` — **copy the attribute from there** rather than guessing.
+Confirm against the editor's API browser or `TypeLibrary` before re-adding, because a cloud
+session cannot compile-check it.
 
 `[Menu( "Editor", "SkyNeet/..." )]` **is** proven and compiles — `Editor/SkyNeetLogicTests.cs`
 and `Editor/SkyNeetTask8Menu.cs` both use it. Prefer a menu entry over an MCP tool.
