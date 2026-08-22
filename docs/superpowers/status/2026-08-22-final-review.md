@@ -140,3 +140,54 @@ The player's collider is the only unintended blocker in the scene.
 `SkyNeetTask8Menu.cs` joins the four already there. The escalation ladder in §3 above still
 applies unchanged — the assembly compiles as one unit, and every added file is one more way
 for Task 2's `[Menu]` harness to be taken down by something unrelated to it.
+
+---
+
+# Round 3 (18:00Z) — PRs merged, lock released, FortBlock fixed
+
+Grok has reached its limits and is not returning. Cursor released its file-ownership lock
+(`2026-08-22-cursor-lock.md` deleted). Claude is the only agent left, so the ownership
+protocol is retired and the flag-don't-fix rule with it.
+
+PRs #1 and #2 were draft; both were `mergeable_state: clean`, reviewed against the merged
+tree, marked ready and merged into `feat/skyneet-survivors-design`. PR #3 was already
+merged. **No open PRs remain.**
+
+## FortBlock: fixed, and not the way the earlier note suggested
+
+The confirmed bug stood: `FortBlock.Hits` swept every `BoxCollider` in the scene and tried
+to skip the player's by testing the collider's own GameObject for `PlayerController`. In
+`cavern.scene` the colliders live on a child (`Colliders`) whose *parent* holds
+`PlayerController`, so the skip never fired and the player read as a wall — Goliaths halted
+48u out and never closed.
+
+Round 2 proposed walking the ancestor chain. **That is not what was implemented**, because
+it keeps the underlying shape: a blacklist over every collider in the scene, where anything
+nobody remembered to exclude silently becomes a wall. It also leans on `GameObject.Parent`,
+which nothing in this codebase has proven.
+
+`FortBlock` now asks what a thing **is** rather than whether it carries a collider: it
+blocks on solidified `FortGhost`s and on `OccupiedSite`s, and on nothing else. That
+
+- removes the player bug by construction — the player is not a built piece, so it can never
+  block, no matter where its colliders sit;
+- drops the dead `Goliath` skip (no Goliath is ever given a `BoxCollider`);
+- states spec §4 directly in code — a ghost you have not bought is still skipped;
+- uses only APIs already proven in this repo (`GetAllComponents<T>`, `IsValid()`,
+  `WorldPosition`, `WithZ`), where the ancestor walk would have added an unproven one.
+
+The trade: a future built-piece type must be added to `FortBlock`. That is a far smaller
+failure mode than scene furniture silently walling off the cavern.
+
+The `BoxCollider`s on forts are still doing their job — they are what stops the *player*,
+who moves through real physics. `FortBlock` is only the Goliath's side of the same rule.
+
+## Verification: now entirely on Alex
+
+Every "Grok will run this" instruction in the docs above is void. Nothing in this repository
+has ever been compiled or played. The whole slice — five tasks, three agents, ~20 commits —
+rests on unverified s&box API assumptions.
+
+First command that matters is still `compile_status`, and it needs the editor on the PC.
+Order: compile → editor-assembly ladder in §3 if red → `SkyNeet / Run Logic Tests` →
+the play scripts → Task 8. Wave 4 stays shut until that gate passes.
