@@ -1,7 +1,7 @@
 /// <summary>
 /// Signature enemy: personally weak, makes Goliaths remember the catalog.
 /// Window is a [Property] so design can retune without a code edit.
-/// Tint lives here so Task 6 does not fight Grok's CompetenceRules work on Goliath.cs.
+/// Tint live-updates go through SliceTints so they cannot drift from spawn.
 /// </summary>
 public sealed class SancientDirector : Component
 {
@@ -13,16 +13,11 @@ public sealed class SancientDirector : Component
 	float _windowLeft;
 	bool _fired;
 
-	/// <summary>Idle Goliath tint — same numbers WorldFactory uses. Duplicated so this file compiles without that type.</summary>
-	public static readonly Color IdleGoliathTint = new Color( 0.7f, 0.1f, 0.1f );
-
-	public static readonly Color PuppetTint = Color.Yellow;
-
 	protected override void OnStart()
 	{
 		var renderer = Components.Get<ModelRenderer>();
 		if ( renderer is not null )
-			renderer.Tint = new Color( 0.6f, 0.2f, 1f );
+			renderer.Tint = SliceTints.SancientTint;
 	}
 
 	protected override void OnFixedUpdate()
@@ -63,7 +58,7 @@ public sealed class SancientDirector : Component
 		foreach ( var g in Scene.GetAllComponents<Goliath>() )
 		{
 			g.SetPuppeted( true );
-			Tint( g, PuppetTint );
+			Tint( g, SliceTints.GoliathPuppetTint );
 		}
 		Log.Info( "[SkyNeet] Sancient on the net. They remember." );
 	}
@@ -75,7 +70,7 @@ public sealed class SancientDirector : Component
 		foreach ( var g in Scene.GetAllComponents<Goliath>() )
 		{
 			g.SetPuppeted( false );
-			Tint( g, IdleGoliathTint );
+			Tint( g, SliceTints.GoliathTint );
 		}
 		Log.Info( "[SkyNeet] Sancient window closed. The catalog sleeps again." );
 	}

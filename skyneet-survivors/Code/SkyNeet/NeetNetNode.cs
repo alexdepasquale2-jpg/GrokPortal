@@ -7,9 +7,6 @@ public sealed class NeetNetNode : Component
 	[Property] public float UseRange { get; set; } = 80f;
 	[Sync( SyncFlags.FromHost )] public bool Planted { get; set; }
 
-	static readonly Color DarkTint = new Color( 0.2f, 0.9f, 1f );
-	static readonly Color LitTint = new Color( 0.7f, 1f, 1f );
-
 	OperationDirector Director => Scene.GetAllComponents<OperationDirector>().FirstOrDefault();
 
 	protected override void OnStart()
@@ -23,12 +20,23 @@ public sealed class NeetNetNode : Component
 	/// </summary>
 	public bool ShouldPromptPlant( Vector3 worldPos )
 	{
-		return !Planted && worldPos.Distance( WorldPosition ) <= UseRange;
+		if ( Planted )
+			return false;
+
+		var director = Director;
+		if ( director is not null && ( director.NodeUp || director.OperationEnded ) )
+			return false;
+
+		return worldPos.Distance( WorldPosition ) <= UseRange;
 	}
 
 	protected override void OnUpdate()
 	{
 		if ( IsProxy || Planted )
+			return;
+
+		var director = Director;
+		if ( director is null || director.OperationEnded )
 			return;
 
 		if ( !Input.Pressed( "Use" ) )
@@ -43,7 +51,7 @@ public sealed class NeetNetNode : Component
 
 		Planted = true;
 		ApplyTint();
-		Director?.PlantNode();
+		director.PlantNode();
 	}
 
 	void ApplyTint()
@@ -52,6 +60,6 @@ public sealed class NeetNetNode : Component
 		if ( renderer is null )
 			return;
 
-		renderer.Tint = Planted ? LitTint : DarkTint;
+		renderer.Tint = Planted ? SliceTints.NodeLitTint : SliceTints.NodeTint;
 	}
 }
