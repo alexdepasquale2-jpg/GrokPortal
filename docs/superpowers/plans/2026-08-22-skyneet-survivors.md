@@ -525,10 +525,20 @@ public sealed class CampaignGraph
 
 `DemoThreeSites()` returns `cavern_0`, `cavern_1`, `cavern_2` all Owner Neet.
 
-- [ ] **Step 1: Types + store path `skyneet_campaign.json`**
-- [ ] **Step 2: Logic test** `DemoThreeSites().Sites.Count == 3`
-- [ ] **Step 3: OperationDirector reads `SiteId` from a static `CampaignSession.SelectedSiteId` defaulting to `cavern_0`**
-- [ ] **Step 4: Commit** `feat: campaign graph with three sites`
+- [x] **Step 1: Types + store path `skyneet_campaign.json`** — `CampaignGraph.cs`, `CampaignStore.LoadGraph/WriteGraph`
+- [x] **Step 2: Logic test** — in `SkyNeet/Run Logic Tests`, incl. a JSON round trip
+- [x] **Step 3: OperationDirector reads `SiteId` from `CampaignSession.SelectedSiteId`** — `CampaignSession.cs` created here rather than in Task 11, which needed it first; Task 11 adds the storm length to it
+- [x] **Step 4: Commit** `feat: campaign graph with three sites`
+
+Not done here: `Assets/scenes/board.scene`, listed in this task's Files but in none of its
+steps. It needs `CampaignBoard`, which is Task 12 — an empty scene referencing a component
+that does not exist yet would break the editor. Task 12 creates both.
+
+Two deviations from the sketch above, both to avoid regressing Task 5:
+`SiteRecord` carries `FortStanding` (without it a re-drop forgets the red Occupied fort),
+and the graph — not the old single-site file — is now the source of truth. A pre-Task-9
+`skyneet_site.json` is folded in once on first load, and the writer for that dead shape was
+removed so nothing can quietly write it again.
 
 ---
 

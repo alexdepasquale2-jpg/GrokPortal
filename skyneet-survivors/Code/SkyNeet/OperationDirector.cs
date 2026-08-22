@@ -4,8 +4,11 @@
 /// </summary>
 public sealed class OperationDirector : Component
 {
+	/// <summary>Pre-Task-9 single-site save. Read once to migrate, never written again.</summary>
 	public const string SaveFile = "skyneet_site.json";
-	public const string SiteId = "cavern_0";
+
+	/// <summary>Which field this drop is. The board sets it; default is the slice cavern.</summary>
+	public static string SiteId => CampaignSession.SelectedSiteId;
 
 	[Property] public float StormSeconds { get; set; } = 15f * 60f;
 	[Property] public int StartingScrap { get; set; } = 0;
@@ -21,11 +24,15 @@ public sealed class OperationDirector : Component
 
 	public CampaignSave LastSave { get; private set; }
 
+	/// <summary>The whole war, not just this hole. Written back on every operation end.</summary>
+	public CampaignGraph Campaign { get; private set; }
+
 	protected override void OnStart()
 	{
 		if ( IsProxy )
 			return;
 
+		Campaign = CampaignStore.LoadGraph( CampaignStore.GraphFile, SaveFile );
 		LastSave = LoadSave();
 		SiteOwner = LastSave.Owner;
 		TimeLeft = StormSeconds;
@@ -143,14 +150,31 @@ public sealed class OperationDirector : Component
 		return Scene.GetAllComponents<OccupiedSite>().Any();
 	}
 
+	/// <summary>This site's record, in the shape one operation reasons about.</summary>
 	CampaignSave LoadSave()
 	{
-		return CampaignStore.Load( SaveFile );
+		var record = Campaign.Get( SiteId );
+
+		return new CampaignSave
+		{
+			SiteId = record.Id,
+			Owner = record.Owner,
+			NodeUp = record.NodeUp,
+			OccupierScrap = record.Stockpile,
+			FortStanding = record.FortStanding
+		};
 	}
 
+	/// <summary>Fold what this run did back into the war, then persist the whole graph.</summary>
 	void WriteSave( CampaignSave save )
 	{
-		CampaignStore.Write( SaveFile, save );
+		var record = Campaign.Get( save.SiteId );
+		record.Owner = save.Owner;
+		record.NodeUp = save.NodeUp;
+		record.Stockpile = save.OccupierScrap;
+		record.FortStanding = save.FortStanding;
+
+		CampaignStore.WriteGraph( CampaignStore.GraphFile, Campaign );
 	}
 
 	void EnsureWorld()
