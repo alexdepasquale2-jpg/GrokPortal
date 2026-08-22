@@ -162,37 +162,8 @@ public sealed class OperationDirector : Component
 
 	void EnsureWorld()
 	{
-		if ( !Scene.GetAllComponents<NeetNetNode>().Any() )
-			SpawnTagged( "NeetNetNode", new Vector3( 180, 0, 32 ), go => go.Components.Create<NeetNetNode>() );
-
-		if ( !Scene.GetAllComponents<ExtractZone>().Any() )
-			SpawnTagged( "Extract", new Vector3( -220, 0, 32 ), go => go.Components.Create<ExtractZone>() );
-
-		if ( !Scene.GetAllComponents<ScrapPile>().Any() )
-		{
-			SpawnTagged( "Scrap A", new Vector3( 80, 120, 16 ), go => go.Components.Create<ScrapPile>().Amount = 15 );
-			SpawnTagged( "Scrap B", new Vector3( -80, 140, 16 ), go => go.Components.Create<ScrapPile>().Amount = 15 );
-			SpawnTagged( "Scrap C", new Vector3( 40, -160, 16 ), go => go.Components.Create<ScrapPile>().Amount = 20 );
-		}
-
-		if ( !Scene.GetAllComponents<FortGhost>().Any() )
-			SpawnTagged( "Fort Ghost", new Vector3( 0, -80, 16 ), go =>
-			{
-				var g = go.Components.Create<FortGhost>();
-				g.ScrapCost = 20;
-			} );
-
-		if ( !Scene.GetAllComponents<Goliath>().Any() )
-		{
-			SpawnTagged( "Goliath", new Vector3( 300, 200, 40 ), go =>
-			{
-				var g = go.Components.Create<Goliath>();
-				g.Lethality = 0.85f;
-			} );
-		}
-
-		if ( !Scene.GetAllComponents<SancientDirector>().Any() )
-			SpawnTagged( "Sancient", new Vector3( 400, 400, 40 ), go => go.Components.Create<SancientDirector>() );
+		// Props, tints and placement live in WorldFactory so the cavern stays readable.
+		WorldFactory.Build( this );
 
 		var player = Scene.GetAllComponents<PlayerController>().FirstOrDefault();
 		if ( player is not null )
@@ -212,14 +183,5 @@ public sealed class OperationDirector : Component
 
 		if ( LastSave.Owner == "Occupied" )
 			Log.Info( "[SkyNeet] This field is Occupied. The fort you raised last time is not yours." );
-	}
-
-	void SpawnTagged( string name, Vector3 pos, Action<GameObject> setup )
-	{
-		var go = new GameObject( true, name );
-		go.WorldPosition = pos;
-		var renderer = go.Components.Create<ModelRenderer>();
-		renderer.Model = Model.Load( "models/dev/box.vmdl" );
-		setup( go );
 	}
 }
