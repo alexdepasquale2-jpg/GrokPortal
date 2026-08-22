@@ -23,7 +23,7 @@ public sealed class OperationHud : PanelComponent
 			Panel.Style.FontSize = 18;
 			Panel.Style.FontFamily = "Poppins";
 			Panel.Style.WhiteSpace = WhiteSpace.PreWrap;
-			_body = Panel.Add.Label( "" );
+			_body = Panel.AddChild<Label>();
 		}
 
 		var d = Scene.GetAllComponents<OperationDirector>().FirstOrDefault();
