@@ -1,5 +1,6 @@
 /// <summary>
 /// Inept Goliath. High lethality, low competence — until a Sancient puppets it.
+/// Movement is unchanged: weave by competence, host-only, sleeps while the hole is dark.
 /// </summary>
 public sealed class Goliath : Component
 {
@@ -15,10 +16,11 @@ public sealed class Goliath : Component
 
 	float _attackCd;
 	float _baseCompetence;
+	bool _loggedDormant;
 
 	protected override void OnStart()
 	{
-		_baseCompetence = Math.Clamp( 1f - Lethality, 0.05f, 0.95f );
+		_baseCompetence = CompetenceRules.SpawnCompetence( Lethality );
 		if ( !IsProxy )
 		{
 			Competence = _baseCompetence;
@@ -44,7 +46,7 @@ public sealed class Goliath : Component
 		if ( IsProxy )
 			return;
 		Puppeted = on;
-		Competence = on ? 1f : _baseCompetence;
+		Competence = on ? CompetenceRules.PuppetCompetence() : _baseCompetence;
 	}
 
 	protected override void OnFixedUpdate()
@@ -53,8 +55,18 @@ public sealed class Goliath : Component
 			return;
 
 		var director = Scene.GetAllComponents<OperationDirector>().FirstOrDefault();
-		if ( director is null || director.OperationEnded || !director.NodeUp )
+		if ( director is null || director.OperationEnded )
 			return;
+
+		if ( !director.NodeUp )
+		{
+			if ( !_loggedDormant )
+			{
+				_loggedDormant = true;
+				Log.Info( "[SkyNeet] Goliath dormant (dark)" );
+			}
+			return;
+		}
 
 		var player = Scene.GetAllComponents<PlayerController>().FirstOrDefault();
 		var health = Scene.GetAllComponents<NeetHealth>().FirstOrDefault();
@@ -79,7 +91,7 @@ public sealed class Goliath : Component
 		_attackCd = AttackInterval;
 
 		// Inverse: lethality is damage IF the shot lands. Competence is hit chance.
-		var hit = Game.Random.Float( 0f, 1f ) <= Competence; // 0–1, same units as Competence
+		var hit = CompetenceRules.RollHit( Competence, Game.Random.Float( 0f, 1f ) );
 		if ( !hit )
 		{
 			Log.Info( "[SkyNeet] Goliath missed. Catalog is still asleep." );
