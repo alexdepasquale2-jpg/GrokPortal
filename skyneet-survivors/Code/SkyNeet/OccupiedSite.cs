@@ -10,6 +10,10 @@ public sealed class OccupiedSite : Component
 
 	protected override void OnStart()
 	{
+		// A standing fort is a built piece, so it blocks - whoever's flag is on it.
+		if ( GameObject.Components.Get<BoxCollider>() is null )
+			GameObject.Components.Create<BoxCollider>();
+
 		if ( IsProxy )
 			return;
 

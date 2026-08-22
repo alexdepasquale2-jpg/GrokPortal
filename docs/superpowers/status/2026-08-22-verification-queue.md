@@ -93,3 +93,30 @@ you a fresh ghost to re-buy rather than your fort back. That follows the plan's 
 (only `Occupied` gets a solid fort) but it is a hole in the persistence story.
 Closing it means a field on `CampaignSave`, which is Task 9's territory — flagged
 rather than widened.
+
+## 5. Solidity — new, and not from the plan
+
+Spec §4 invariant: *"Ghosts are not solid and do not block pathing; built pieces do."*
+
+Nothing implemented it. `Code/` contained **no collider, rigidbody or physics code at all**;
+`FortGhost.Solid` flipped a bool, added loudness and logged. A fort you paid 20 scrap for
+blocked nothing — you and the Goliaths walked through it. No task in the plan assigns this,
+so it was falling between them, and it means Task 8's **power** pillar
+("this fort is becoming ridiculous") could not land no matter how the playtest went.
+
+`FortGhost` now creates a `BoxCollider` **on solidify** (not at spawn, so ghosts stay
+non-solid per the invariant), and `OccupiedSite` creates one at spawn, since a standing
+fort is a built piece whoever's flag is on it.
+
+Check in the editor:
+
+1. Before buying: walk **through** the pale ghost. It must not block.
+2. Buy it with 20 scrap. Log: `Fort solidified. It blocks the hole now.`
+3. Walk into it. It must now block.
+4. On an Occupied re-drop, the red fort must block from the moment you land.
+
+**Caveat I could not check:** `BoxCollider` is created with default dimensions. Whether that
+default matches `models/dev/box.vmdl` is unknown from here — if the block volume looks
+wrong relative to the box, its size property needs setting at those two call sites.
+
+`FortGhost.cs` was owned by no task in the plan, which is why it was safe to take.
