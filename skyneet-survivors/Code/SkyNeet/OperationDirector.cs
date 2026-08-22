@@ -63,7 +63,7 @@ public sealed class OperationDirector : Component
 
 	public void AddScrap( int amount )
 	{
-		if ( IsProxy )
+		if ( IsProxy || OperationEnded )
 			return;
 		Scrap += amount;
 		Log.Info( $"[SkyNeet] Scrap {Scrap}" );
@@ -71,7 +71,7 @@ public sealed class OperationDirector : Component
 
 	public bool TrySpendScrap( int amount )
 	{
-		if ( IsProxy || Scrap < amount )
+		if ( IsProxy || OperationEnded || Scrap < amount )
 			return false;
 		Scrap -= amount;
 		return true;
@@ -107,7 +107,7 @@ public sealed class OperationDirector : Component
 		{
 			SiteId = SiteId,
 			NodeUp = NodeUp,
-			FortStanding = true,
+			FortStanding = FortStands(),
 			OccupierScrap = Scrap
 		};
 
@@ -126,73 +126,37 @@ public sealed class OperationDirector : Component
 		LastSave = save;
 
 		Log.Info( $"[SkyNeet] Operation ended ({reason}). Site owner is now {save.Owner}. NodeUp={save.NodeUp}." );
+
+		if ( save.Owner == "Occupied" )
+			Log.Info( $"[SkyNeet] You left {save.OccupierScrap} scrap in the hole. It is theirs now." );
+	}
+
+	/// <summary>
+	/// A fort stands if you raised one this run, or if one was already standing here
+	/// under someone else's flag. Occupancy has to survive the run that lost it.
+	/// </summary>
+	bool FortStands()
+	{
+		if ( Scene.GetAllComponents<FortGhost>().Any( f => f.Solid ) )
+			return true;
+
+		return Scene.GetAllComponents<OccupiedSite>().Any();
 	}
 
 	CampaignSave LoadSave()
 	{
-		try
-		{
-			if ( FileSystem.Data.FileExists( SaveFile ) )
-			{
-				var json = FileSystem.Data.ReadAllText( SaveFile );
-				var save = Json.Deserialize<CampaignSave>( json );
-				if ( save is not null )
-					return save;
-			}
-		}
-		catch ( Exception e )
-		{
-			Log.Warning( $"[SkyNeet] Save load failed: {e.Message}" );
-		}
-
-		return new CampaignSave();
+		return CampaignStore.Load( SaveFile );
 	}
 
 	void WriteSave( CampaignSave save )
 	{
-		try
-		{
-			FileSystem.Data.WriteAllText( SaveFile, Json.Serialize( save ) );
-		}
-		catch ( Exception e )
-		{
-			Log.Warning( $"[SkyNeet] Save write failed: {e.Message}" );
-		}
+		CampaignStore.Write( SaveFile, save );
 	}
 
 	void EnsureWorld()
 	{
-		if ( !Scene.GetAllComponents<NeetNetNode>().Any() )
-			SpawnTagged( "NeetNetNode", new Vector3( 180, 0, 32 ), go => go.Components.Create<NeetNetNode>() );
-
-		if ( !Scene.GetAllComponents<ExtractZone>().Any() )
-			SpawnTagged( "Extract", new Vector3( -220, 0, 32 ), go => go.Components.Create<ExtractZone>() );
-
-		if ( !Scene.GetAllComponents<ScrapPile>().Any() )
-		{
-			SpawnTagged( "Scrap A", new Vector3( 80, 120, 16 ), go => go.Components.Create<ScrapPile>().Amount = 15 );
-			SpawnTagged( "Scrap B", new Vector3( -80, 140, 16 ), go => go.Components.Create<ScrapPile>().Amount = 15 );
-			SpawnTagged( "Scrap C", new Vector3( 40, -160, 16 ), go => go.Components.Create<ScrapPile>().Amount = 20 );
-		}
-
-		if ( !Scene.GetAllComponents<FortGhost>().Any() )
-			SpawnTagged( "Fort Ghost", new Vector3( 0, -80, 16 ), go =>
-			{
-				var g = go.Components.Create<FortGhost>();
-				g.ScrapCost = 20;
-			} );
-
-		if ( !Scene.GetAllComponents<Goliath>().Any() )
-		{
-			SpawnTagged( "Goliath", new Vector3( 300, 200, 40 ), go =>
-			{
-				var g = go.Components.Create<Goliath>();
-				g.Lethality = 0.85f;
-			} );
-		}
-
-		if ( !Scene.GetAllComponents<SancientDirector>().Any() )
-			SpawnTagged( "Sancient", new Vector3( 400, 400, 40 ), go => go.Components.Create<SancientDirector>() );
+		// Props, tints and placement live in WorldFactory so the cavern stays readable.
+		WorldFactory.Build( this );
 
 		var player = Scene.GetAllComponents<PlayerController>().FirstOrDefault();
 		if ( player is not null )
@@ -212,14 +176,5 @@ public sealed class OperationDirector : Component
 
 		if ( LastSave.Owner == "Occupied" )
 			Log.Info( "[SkyNeet] This field is Occupied. The fort you raised last time is not yours." );
-	}
-
-	void SpawnTagged( string name, Vector3 pos, Action<GameObject> setup )
-	{
-		var go = new GameObject( true, name );
-		go.WorldPosition = pos;
-		var renderer = go.Components.Create<ModelRenderer>();
-		renderer.Model = Model.Load( "models/dev/box.vmdl" );
-		setup( go );
 	}
 }

@@ -4,6 +4,15 @@ public sealed class CustomTopDownController : Component
 
 	protected override void OnFixedUpdate()
 	{
+		// The operation is over: extracted, dead or out of clock. Nothing you do now counts,
+		// so stop pretending it might. The camera keeps looking at what you caused.
+		var director = Scene.GetAllComponents<OperationDirector>().FirstOrDefault();
+		if ( director is not null && director.OperationEnded )
+		{
+			Controller.WishVelocity = Vector3.Zero;
+			return;
+		}
+
 		// Lets make the player move when we press WASD
 		var speed = Input.Down( "Run" ) ? Controller.RunSpeed : Controller.WalkSpeed;
 		Controller.WishVelocity = Input.AnalogMove * speed;

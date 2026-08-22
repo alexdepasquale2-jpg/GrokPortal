@@ -2,7 +2,7 @@
 
 s&box game. Open **this folder** in the s&box editor (`File → Open Project`).
 
-- Ident: `local` / `skyneet.survivors`
+- Ident: `local` / `skyneet_survivors` (`local.skyneet_survivors`)
 - Startup scene: `Assets/scenes/cavern.scene`
 - Editor: `C:\Program Files (x86)\Steam\steamapps\common\sbox\sbox-dev.exe`
 

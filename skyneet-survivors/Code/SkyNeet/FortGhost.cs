@@ -1,5 +1,7 @@
 /// <summary>
 /// One module ghost. Spend scrap to solidify. Solid is loud.
+/// Invariant (spec §4): a ghost is not solid and does not block pathing; a built piece does.
+/// The collider is therefore created on solidify, not at spawn.
 /// </summary>
 public sealed class FortGhost : Component
 {
@@ -20,6 +22,11 @@ public sealed class FortGhost : Component
 		if ( director is null || player is null )
 			return;
 
+		// The run is over. Without this the spend fails and we tell the player they are
+		// short of scrap they are actually holding.
+		if ( director.OperationEnded )
+			return;
+
 		if ( player.WorldPosition.Distance( WorldPosition ) > UseRange )
 			return;
 
@@ -30,7 +37,12 @@ public sealed class FortGhost : Component
 		}
 
 		Solid = true;
+
+		// A fort that blocks nothing is a tinted box you paid for. This is what makes it a wall.
+		if ( GameObject.Components.Get<BoxCollider>() is null )
+			GameObject.Components.Create<BoxCollider>();
+
 		director.NotifyBuild();
-		Log.Info( "[SkyNeet] Fort solidified. You just made noise." );
+		Log.Info( "[SkyNeet] Fort solidified. It blocks the hole now. You just made noise." );
 	}
 }
