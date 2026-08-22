@@ -56,7 +56,7 @@ public sealed class NeetNetNode : Component
 
 	void ApplyTint()
 	{
-		var renderer = Components.Get<ModelRenderer>();
+		var renderer = GameObject.Components.Get<ModelRenderer>();
 		if ( renderer is null )
 			return;
 

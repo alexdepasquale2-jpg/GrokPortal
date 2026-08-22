@@ -15,7 +15,7 @@ public sealed class SancientDirector : Component
 
 	protected override void OnStart()
 	{
-		var renderer = Components.Get<ModelRenderer>();
+		var renderer = GameObject.Components.Get<ModelRenderer>();
 		if ( renderer is not null )
 			renderer.Tint = SliceTints.SancientTint;
 	}
@@ -77,7 +77,7 @@ public sealed class SancientDirector : Component
 
 	static void Tint( Goliath goliath, Color tint )
 	{
-		var renderer = goliath.Components.Get<ModelRenderer>();
+		var renderer = goliath.GameObject.Components.Get<ModelRenderer>();
 		if ( renderer is not null )
 			renderer.Tint = tint;
 	}
