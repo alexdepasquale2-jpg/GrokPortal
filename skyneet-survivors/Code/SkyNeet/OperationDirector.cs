@@ -63,7 +63,7 @@ public sealed class OperationDirector : Component
 
 	public void AddScrap( int amount )
 	{
-		if ( IsProxy )
+		if ( IsProxy || OperationEnded )
 			return;
 		Scrap += amount;
 		Log.Info( $"[SkyNeet] Scrap {Scrap}" );
@@ -71,7 +71,7 @@ public sealed class OperationDirector : Component
 
 	public bool TrySpendScrap( int amount )
 	{
-		if ( IsProxy || Scrap < amount )
+		if ( IsProxy || OperationEnded || Scrap < amount )
 			return false;
 		Scrap -= amount;
 		return true;
@@ -126,6 +126,9 @@ public sealed class OperationDirector : Component
 		LastSave = save;
 
 		Log.Info( $"[SkyNeet] Operation ended ({reason}). Site owner is now {save.Owner}. NodeUp={save.NodeUp}." );
+
+		if ( save.Owner == "Occupied" )
+			Log.Info( $"[SkyNeet] You left {save.OccupierScrap} scrap in the hole. It is theirs now." );
 	}
 
 	/// <summary>
