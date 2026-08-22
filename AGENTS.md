@@ -29,10 +29,12 @@ If an API is not in the s&box docs/API or `TypeLibrary`, it does not exist.
 
 The editor hosts MCP at **Editor → Preferences → MCP Server**.
 
-- URL: `http://127.0.0.1:7269/mcp` (loopback only)
+- URL: `http://127.0.0.1:7269/mcp` (loopback only). The **s&box editor must be running** or this is dead.
+- Grok (this machine): already in `~/.grok/config.toml` and `.grok/config.toml` as `sbox`.
 - Claude: `claude mcp add --transport http sbox http://127.0.0.1:7269/mcp`
-- Grok: HTTP MCP in `~/.grok/config.toml`
 - Cursor: same URL
+- Enable in editor: **Editor → Preferences → MCP Server**
+- Open the game: `File → Open Project` on `skyneet-survivors/` (also junctioned at `Documents\s&box projects\skyneet_survivors`)
 
 Built-in toolsets: `scene`, `play`, `asset`, `component`, `package`, `editor`, `log`.
 

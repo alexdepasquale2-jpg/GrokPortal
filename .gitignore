@@ -28,4 +28,5 @@ Exports/
 
 # Agent / local
 *.log
-.grok/
+.grok/*
+!.grok/config.toml

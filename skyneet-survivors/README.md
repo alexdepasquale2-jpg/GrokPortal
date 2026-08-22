@@ -1,9 +1,11 @@
-# skyneet-survivors
+# SkyNeet Survivors
 
-s&box game project for **SkyNeet Survivors**. Not scaffolded yet.
+s&box game. Open **this folder** in the s&box editor (`File → Open Project`).
 
-Open **this** folder in the s&box editor (Game – Player Controller template, ident `local.skyneet.survivors`).
+- Ident: `local` / `skyneet.survivors`
+- Startup scene: `Assets/scenes/cavern.scene`
+- Editor: `C:\Program Files (x86)\Steam\steamapps\common\sbox\sbox-dev.exe`
 
-First implementation target: **vertical slice** — spec §11 (one cavern, 15 min, top-down, scrap, NNN, one Sancient, occupancy flag).
+Play: WASD move, E plants **NNN** or raises the fort ghost (costs scrap), stand on the extract pad in the dark to leave. Scrap piles are the boxes around the plane. Lighting NNN wakes the Goliath. Make enough noise and a **Sancient** window makes it hit.
 
-See `docs/superpowers/specs/2026-08-22-skyneet-survivors-design.md` at the repo root.
+Occupancy: die or timeout with NNN up and the next drop the site is **Occupied**.
