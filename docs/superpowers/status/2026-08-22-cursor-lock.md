@@ -9,7 +9,7 @@ already claimed WorldFactory / occupancy / extract on `claude/grok-build-env-set
 | Owner | Files | Tasks |
 |---|---|---|
 | **Grok** | `Goliath.cs`, `CompetenceRules.cs`, `Editor/SkyNeetLogicTests.cs` | Task 2 |
-| **Claude** | `WorldFactory.cs`, `CampaignStore.cs`, `OccupiedSite.cs`, `OperationDirector.cs`, `ExtractZone.cs`, `FortGhost.cs` | 3, 5, 7, solidity |
+| **Claude** | `WorldFactory.cs`, `CampaignStore.cs`, `OccupiedSite.cs`, `OperationDirector.cs`, `ExtractZone.cs`, `FortGhost.cs`, `TopDownController.cs` | 3, 5, 7, solidity, pawn freeze |
 
 ## Cursor owns this turn
 
