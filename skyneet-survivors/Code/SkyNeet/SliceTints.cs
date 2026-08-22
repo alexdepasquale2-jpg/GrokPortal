@@ -1,6 +1,6 @@
 /// <summary>
 /// Slice cavern tints. One place so spawn (WorldFactory) and live updates (node plant,
-/// Sancient puppet) cannot drift. Claude: please switch WorldFactory's copies to these.
+/// Sancient puppet) cannot drift. Claude's WorldFactory reads these as of 1dd7cd6.
 /// </summary>
 public static class SliceTints
 {
