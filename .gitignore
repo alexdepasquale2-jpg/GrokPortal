@@ -1,0 +1,31 @@
+# OS / editor
+Thumbs.db
+Desktop.ini
+.DS_Store
+*.suo
+*.user
+
+# s&box (official template)
+.vs/*
+.vscode/*
+*.csproj
+obj
+bin
+Properties/*
+code/obj/*
+code/Properties/*
+.sbox/*
+*.generated.*
+*.*_c
+!*.shader_c
+*.los
+*.vpk
+*launchSettings.json
+*.sln
+*.slnx
+*idea
+Exports/
+
+# Agent / local
+*.log
+.grok/
