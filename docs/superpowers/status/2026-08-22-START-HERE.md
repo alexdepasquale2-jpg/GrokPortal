@@ -30,6 +30,32 @@ scavenge → build → NNN → wake machines → noise → Sancient → leave or
 | 7 | Extract hold feedback; three clean end reasons; everything freezes on end |
 | — | Built pieces block (spec §4): colliders stop the player, `FortBlock` stops Goliaths |
 
+## FIRST COMPILE RESULT (resolved)
+
+The first `compile_status` returned 9 errors, all `CS0246` and all in `Editor/`:
+`McpToolsetAttribute` / `McpToolset` / `McpTool` could not be found. That is **ladder step 2**
+below — the attribute syntax — not step 1. `Game.ActiveScene` was never reached, because the
+attributes fail before any method body is resolved.
+
+**Resolved by deleting the three MCP files** (`SkyNeetMcp.cs`, `SkyNeetPlayMcp.cs`,
+`SkyNeetLogicMcp.cs`). No `McpTool` reference remains in the repo.
+
+Two corrections to the ladder as it was written:
+
+- `SkyNeetTask8Menu.cs` was listed in step 2. It should not have been — it uses `[Menu]`,
+  not the MCP attributes, and threw no errors. It survives, and so does
+  `SkyNeetLogicTests.cs`. Both `SkyNeet/` menu entries still work.
+- **`Code/` compiled clean.** Zero errors across all 18 game components. That clears every
+  API this session could not verify: `ModelRenderer.Tint`, `new Color( r, g, b )` and the
+  4-arg form, `Color.Red` / `Color.Yellow`, `BoxCollider`, `Components.Get/Create`,
+  `GetAllComponents<T>`, `IsValid()`, `WithZ`. The step-4 fallback below is not needed.
+
+What was lost: the `skyneet` / `skyneet_play` / `skyneet_logic` MCP toolsets. Nothing in the
+game depends on them, and both editor menus cover what they were for — `SkyNeet / Run Logic
+Tests` for Task 2, `SkyNeet / Print Task 8 Script` for the playtest. If the MCP tools are
+wanted back later, the real attribute name has to come from the editor's API browser or
+`TypeLibrary`; no agent in this session could reach the s&box docs to confirm it.
+
 ## Tomorrow, in this order
 
 1. **Open the editor** on `skyneet-survivors/` (or the junction at
