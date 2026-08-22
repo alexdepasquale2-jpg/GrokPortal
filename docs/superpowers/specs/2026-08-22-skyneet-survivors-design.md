@@ -6,7 +6,7 @@
 **Engine:** s&box (Source 2 + .NET 10, Steam editor)  
 **Repo:** https://github.com/alexdepasquale2-jpg/GrokPortal  
 **Local game folder (when scaffolded):** `skyneet-survivors/` in this repo.  
-**Ident:** `local.skyneet.survivors`  
+**Ident:** `local.skyneet_survivors` (`Org: local`, `Ident: skyneet_survivors`)  
 **Protagonist:** Neetmon Gould (one Neet, on foot)
 
 This document is the source of truth. Grok Build, Claude Code, and Cursor must follow it. Chat decisions after this date belong in a spec amendment commit, not in a private transcript.

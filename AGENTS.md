@@ -6,7 +6,7 @@ This repo is shared by **Grok Build**, **Claude Code**, and **Cursor**. Read thi
 
 1. `docs/superpowers/specs/2026-08-22-skyneet-survivors-design.md` — game design
 2. This file — how to work
-3. `docs/superpowers/plans/` — implementation plans when they exist
+3. `docs/superpowers/plans/2026-08-22-skyneet-survivors.md` — task-by-task implementation plan (dispatch one agent per task; Wave 0 is serial)
 
 Do not invent systems that contradict the spec. If the spec must change, amend it in git.
 
