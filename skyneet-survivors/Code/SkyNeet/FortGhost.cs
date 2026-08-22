@@ -22,6 +22,11 @@ public sealed class FortGhost : Component
 		if ( director is null || player is null )
 			return;
 
+		// The run is over. Without this the spend fails and we tell the player they are
+		// short of scrap they are actually holding.
+		if ( director.OperationEnded )
+			return;
+
 		if ( player.WorldPosition.Distance( WorldPosition ) > UseRange )
 			return;
 

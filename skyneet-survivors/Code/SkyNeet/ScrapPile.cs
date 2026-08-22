@@ -11,7 +11,7 @@ public sealed class ScrapPile : Component
 
 		var director = Scene.GetAllComponents<OperationDirector>().FirstOrDefault();
 		var player = Scene.GetAllComponents<PlayerController>().FirstOrDefault();
-		if ( director is null || player is null )
+		if ( director is null || player is null || director.OperationEnded )
 			return;
 
 		if ( player.WorldPosition.Distance( WorldPosition ) > Radius )

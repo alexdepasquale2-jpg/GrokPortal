@@ -121,3 +121,74 @@ default matches `models/dev/box.vmdl` is unknown from here — if the block volu
 wrong relative to the box, its size property needs setting at those two call sites.
 
 `FortGhost.cs` was owned by no task in the plan, which is why it was safe to take.
+
+---
+
+# Three-agent integration report (16:30Z)
+
+Cursor pushed `cursor/competence-rules-b294` (Task 2) and `cursor/slice-nnn-sancient-b294`
+(Tasks 4 + 6, MCP helpers) and took Task 2 after Grok did not push `Goliath.cs`.
+Claude trial-merged **all three branches** locally.
+
+## Merge result: clean
+
+`claude/grok-build-env-setup-rkk3ac` + both Cursor branches merge with **zero conflicts**.
+File sets are genuinely disjoint, and both agents added an identical `.mcp.json`, which
+merges silently. Cursor's Task 2 `Goliath.cs` matches the version Claude had stashed and
+yielded, so that stash has been dropped — there is nothing to reconcile.
+
+Merge order does not matter. Nothing below is a merge conflict; these are semantic issues
+that survive a clean merge.
+
+## Blocker risk: the Editor assembly
+
+`Editor/SkyNeetMcp.cs` is the one file that can take down more than itself. If it fails to
+compile, the **whole editor assembly** goes red — which also takes out
+`Editor/SkyNeetLogicTests.cs`, so Task 2's `SkyNeet / Run Logic Tests` menu disappears and
+Task 2 cannot be verified either. Three constructs in it are unproven by any agent:
+
+- `[McpToolset( "skyneet", "..." )]` and `[McpTool.ReadOnly( "name" )]` — nested-attribute
+  syntax, nobody has compiled it.
+- `Game.ActiveScene` — Cursor flagged this itself.
+- `namespace Editor.Mcp;` — the file declares itself inside a first-party engine namespace.
+
+**If the editor assembly goes red, delete the `OperationSnapshot()` method and keep
+`SliceChecklist()`.** All three risky constructs except the toolset attribute live in that
+one method; the checklist is a pure string. That is a 30-second fix that restores Task 2's
+test menu. Do this before assuming anything else is broken.
+
+Editor code referencing game types (`OperationDirector`, `Goliath`) is *not* a risk —
+Task 2's own test file does the same thing by design.
+
+## Two sources of truth for the Goliath tint
+
+`WorldFactory.GoliathTint` and `SancientDirector.IdleGoliathTint` are both
+`new Color( 0.7f, 0.1f, 0.1f )`. Cursor duplicated the literal with the comment "so this
+file compiles without that type" — but both types are in the same game assembly, so the
+duplication is not needed. They will drift the first time anyone retunes the tint, and the
+symptom is nasty to diagnose: Goliaths look right at spawn and change colour after the
+first Sancient window closes. `SancientDirector.OnStart` also re-applies the Sancient
+purple that `WorldFactory` already set, so `WorldFactory.SancientTint` is likewise
+overridable from a second place.
+
+Not fixed here — `SancientDirector.cs` is Cursor's file. **Cursor:** `WorldFactory`'s tint
+constants are `public static readonly`; please reference them and delete the local copies.
+
+## Post-end behaviour, now consistent (mostly)
+
+Claude's Task 7 froze the economy at `AddScrap` / `TrySpendScrap`. That fixed the saved
+stockpile but left `FortGhost` reporting a lie: after the run ended the spend failed, so it
+logged `Need 20 scrap to raise the fort (have 50)` — scrap the player was holding. Both
+`FortGhost` and `ScrapPile` now return early on `OperationEnded`.
+
+**`NeetNetNode` still has this gap and is Cursor's file.** After the operation ends you can
+still press E on the node: `Planted` flips and `ApplyTint()` runs, so the box goes bright
+cyan, while `PlantNode()` correctly no-ops. The node looks online when it is not. One
+`director.OperationEnded` guard in `OnUpdate` closes it. Cosmetic, but it lands exactly at
+the moment the player is reading the end state.
+
+## Sancient timing, as merged
+
+Storm 900s, `EarliestTimeRemaining` 840s, `LoudnessThreshold` 8, plant is +25. So the window
+opens 60s into the run for anyone who planted before then, and `_fired` keeps it to one
+window per run, which matches spec §11 ("one window"). The timing needs no change.
