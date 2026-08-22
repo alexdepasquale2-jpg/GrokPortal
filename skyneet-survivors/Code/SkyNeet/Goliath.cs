@@ -79,7 +79,7 @@ public sealed class Goliath : Component
 		_attackCd = AttackInterval;
 
 		// Inverse: lethality is damage IF the shot lands. Competence is hit chance.
-		var hit = Random.Shared.NextSingle() <= Competence;
+		var hit = Game.Random.Float( 0f, 1f ) <= Competence; // 0–1, same units as Competence
 		if ( !hit )
 		{
 			Log.Info( "[SkyNeet] Goliath missed. Catalog is still asleep." );
