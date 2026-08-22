@@ -107,7 +107,7 @@ public sealed class OperationDirector : Component
 		{
 			SiteId = SiteId,
 			NodeUp = NodeUp,
-			FortStanding = true,
+			FortStanding = FortStands(),
 			OccupierScrap = Scrap
 		};
 
@@ -128,36 +128,26 @@ public sealed class OperationDirector : Component
 		Log.Info( $"[SkyNeet] Operation ended ({reason}). Site owner is now {save.Owner}. NodeUp={save.NodeUp}." );
 	}
 
+	/// <summary>
+	/// A fort stands if you raised one this run, or if one was already standing here
+	/// under someone else's flag. Occupancy has to survive the run that lost it.
+	/// </summary>
+	bool FortStands()
+	{
+		if ( Scene.GetAllComponents<FortGhost>().Any( f => f.Solid ) )
+			return true;
+
+		return Scene.GetAllComponents<OccupiedSite>().Any();
+	}
+
 	CampaignSave LoadSave()
 	{
-		try
-		{
-			if ( FileSystem.Data.FileExists( SaveFile ) )
-			{
-				var json = FileSystem.Data.ReadAllText( SaveFile );
-				var save = Json.Deserialize<CampaignSave>( json );
-				if ( save is not null )
-					return save;
-			}
-		}
-		catch ( Exception e )
-		{
-			Log.Warning( $"[SkyNeet] Save load failed: {e.Message}" );
-		}
-
-		return new CampaignSave();
+		return CampaignStore.Load( SaveFile );
 	}
 
 	void WriteSave( CampaignSave save )
 	{
-		try
-		{
-			FileSystem.Data.WriteAllText( SaveFile, Json.Serialize( save ) );
-		}
-		catch ( Exception e )
-		{
-			Log.Warning( $"[SkyNeet] Save write failed: {e.Message}" );
-		}
+		CampaignStore.Write( SaveFile, save );
 	}
 
 	void EnsureWorld()
