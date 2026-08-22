@@ -70,6 +70,17 @@ extracting in the dark gives you a fresh ghost to re-buy rather than your fort b
 it needs a field on `CampaignSave`, which is Task 9 territory — there is a written plan at
 `docs/superpowers/plans/2026-08-22-skyneet-fort-ownership.md`.
 
+## One directory question for the editor to settle
+
+`Assets/scenes/cavern.scene_d` is a 48-byte binary sidecar next to the 182KB
+`cavern.scene`. It came in with the original scaffold commit, contains no strings beyond a
+GUID-like blob, and looks like a generated Source 2 dependency manifest. The official s&box
+`.gitignore` in this repo covers compiled `*.*_c` but not `_d`, so it is tracked.
+
+**Check on first editor load:** if the editor regenerates or rewrites it, add `*.scene_d`
+to `.gitignore` so it stops producing noise diffs. If the scene will not load without it,
+leave it tracked. Not deleted here — that could not be tested from a cloud session.
+
 ## The honest caveat
 
 Roughly 20 commits of C# were written by two agents that could not compile a single line of
