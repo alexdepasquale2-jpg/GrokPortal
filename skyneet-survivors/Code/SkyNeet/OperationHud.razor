@@ -1,14 +1,12 @@
 @using Sandbox;
 @using Sandbox.UI;
-@using System;
-@using System.Linq;
 @inherits PanelComponent
 
 <root>
 	<div class="panel">
-		<div class="line">SKYNEET  @Clock()  |  SCRAP @Scrap()</div>
-		<div class="line">NNN @(Node())  LOUD @Loud()  @(Sancient())</div>
-		<div class="line">OWNER @Owner()  @End()</div>
+		<div class="line">SKYNEET  @ClockText  |  SCRAP @ScrapText</div>
+		<div class="line">NNN @NodeText  LOUD @LoudText  @SancientText</div>
+		<div class="line">OWNER @OwnerText  @EndText</div>
 		<div class="hint">E: plant NNN / raise fort   extract: hold the dark pad</div>
 	</div>
 </root>
@@ -30,24 +28,3 @@ root {
 .line { font-size: 18px; }
 .hint { font-size: 13px; color: #c8c8c8; margin-top: 6px; }
 </style>
-
-@code
-{
-	OperationDirector D => Scene.GetAllComponents<OperationDirector>().FirstOrDefault();
-
-	string Clock()
-	{
-		if ( D is null ) return "--:--";
-		var t = MathF.Max( D.TimeLeft, 0 );
-		return $"{(int)(t / 60):00}:{(int)(t % 60):00}";
-	}
-
-	string Scrap() => D is null ? "0" : D.Scrap.ToString();
-	string Node() => D is not null && D.NodeUp ? "ONLINE" : "DARK";
-	string Loud() => D is null ? "0" : D.Loudness.ToString( "0.0" );
-	string Sancient() => D is not null && D.SancientActive ? "SANCIENT AWAKE" : "";
-	string Owner() => D?.SiteOwner ?? "?";
-	string End() => D is not null && D.OperationEnded ? $"ENDED {D.EndReason}" : "";
-
-	protected override int BuildHash() => System.HashCode.Combine( Clock(), Scrap(), Node(), Loud(), Sancient(), Owner(), End() );
-}
