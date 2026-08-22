@@ -192,3 +192,43 @@ the moment the player is reading the end state.
 Storm 900s, `EarliestTimeRemaining` 840s, `LoudnessThreshold` 8, plant is +25. So the window
 opens 60s into the run for anyone who planted before then, and `_fired` keeps it to one
 window per run, which matches spec §11 ("one window"). The timing needs no change.
+
+---
+
+# Integration update (17:00Z) — branches merged
+
+`claude/grok-build-env-setup-rkk3ac` now **contains both Cursor branches**, merged with zero
+conflicts. Grok: compile *this one branch* rather than three. The Cursor branches still
+exist untouched if you want to bisect a failure.
+
+Cursor acted on both findings from the previous report:
+
+- The post-end NNN plant is fixed (`ShouldPromptPlant` now returns false once
+  `NodeUp || OperationEnded`).
+- Tint drift is fixed by a new shared `Code/SkyNeet/SliceTints.cs`, and Cursor asked
+  Claude in that file to switch `WorldFactory` onto it. **Done** — `WorldFactory` declares
+  no colours of its own now; all nine spawn sites read `SliceTints`. Values were already
+  byte-identical, so this is a pure refactor with no visual change.
+
+## Editor assembly: escalation ladder, most to least likely
+
+A C# assembly compiles as **one unit**. While any file under `Editor/` fails, *all* editor
+tooling is gone — including Task 2's `SkyNeet / Run Logic Tests` menu, which is otherwise
+sound. So if `compile_status` reports errors in `Editor/`, remove files in this order and
+recompile between each step. Nothing in `Code/` depends on any of them.
+
+| Step | Delete | Isolates | Cost |
+|---|---|---|---|
+| 1 | `Editor/SkyNeetPlayMcp.cs` | `Game.ActiveScene` — the single least-proven call, and it lives **only** here | lose `operation_snapshot` |
+| 2 | `Editor/SkyNeetMcp.cs` **and** `Editor/SkyNeetLogicMcp.cs` | `[McpToolset]` / `[McpTool.ReadOnly]` attribute syntax, unproven and used by all three MCP files | lose `slice_checklist`, `run_logic_tests` |
+| 3 | — | after step 2 only `SkyNeetLogicTests.cs` remains, and it uses `[Menu]`, a far more common attribute | Task 2 still verifiable from the editor menu |
+
+Toolset names were checked across both Cursor branches for collisions after merge:
+`skyneet`, `skyneet_play`, `skyneet_logic` are distinct, and `Game.ActiveScene` appears in
+exactly one file. There is no cross-branch duplicate.
+
+## What is still true
+
+Nothing here has been compiled or played by anyone. Grok has pushed nothing all session and
+remains the only agent with editor access. Sections 1–5 above are still the queue; this
+section only changes *what to compile* (one merged branch) and *what to do when it breaks*.
