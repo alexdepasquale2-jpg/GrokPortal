@@ -43,11 +43,15 @@ Do **not** install community WebSocket MCP bridges. Game-specific tools belong i
 ## Product spine (do not “simplify away”)
 
 - PvE, one body: **Neetmon Gould**
-- 15/30/45/60 operations; backpack resets; campaign graph persists
-- Live cameras; view-linked combat (presets later)
-- Dual-res building + blueprint ghosts
-- Dark until **NeetNetNode**; inept Goliaths; Sancients puppet; Nobots occupy
-- v1 is a thin cut of those systems (see spec §10), not a different game
+- Causal chain: scavenge → build → **NNN** → wake machines → noise → Sancient/occupiers → leave or hold → **the field you lose is still someone’s**
+- Fun pillars: greed, dread, power, panic, consequence
+- **First build is the vertical slice (spec §11):** one cavern, 15 min, top-down only, scrap only, one module, one weapon, one robot, one NNN, one Sancient, one extract, one `owner` flag
+- Do **not** start with three cameras, dual-res, blueprint sandbox, flavor mechanics, extra currencies, or Nobot diplomacy
+- Full vision stays in the spec; it is not the current implementation target
+
+## Spec vs assumptions
+
+Design **invariants** (one pawn, host sim, dark until NNN, inverse competence, Sancient keeps lethality, occupancy persists) outrank **implementation assumptions** (`CameraComponent`, `NavMeshArea`, MCP URL, `FileSystem.Data`). If the editor fights an assumption, keep the invariant.
 
 ## Git
 

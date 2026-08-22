@@ -1,14 +1,20 @@
 # SkyNeet Survivors — Game Design
 
 **Date:** 2026-08-22  
-**Status:** Approved in design review (sections 1–7). Awaiting implementation plan.  
+**Amended:** 2026-08-22 from [`FEEDBACK.md`](../../../FEEDBACK.md) on `feat/skyneet-survivors-design`  
+**Status:** Spec amended after review. First implementation target is the **vertical slice** (§11), not the full v1 list.  
 **Engine:** s&box (Source 2 + .NET 10, Steam editor)  
 **Repo:** https://github.com/alexdepasquale2-jpg/GrokPortal  
-**Local game folder (when scaffolded):** `skyneet-survivors/` in this repo, also intended as `C:\Users\Albert\SkyNeetSurvivors` if opened as a standalone s&box project.  
+**Local game folder (when scaffolded):** `skyneet-survivors/` in this repo.  
 **Ident:** `local.skyneet.survivors`  
 **Protagonist:** Neetmon Gould (one Neet, on foot)
 
 This document is the source of truth. Grok Build, Claude Code, and Cursor must follow it. Chat decisions after this date belong in a spec amendment commit, not in a private transcript.
+
+**Causal chain (protect this):**  
+Scavenge → build → activate NNN → wake machines → make noise → attract Sancient / occupiers → defend or escape → alter territory → return to a changed world.
+
+The field you lose is still **someone else’s field**. That is the piece that must survive every cut.
 
 ---
 
@@ -16,35 +22,92 @@ This document is the source of truth. Grok Build, Claude Code, and Cursor must f
 
 SkyNeet Survivors is a **PvE operation game** with a **living underground war**.
 
-It is Vampire Survivors combat, Rust/tower-defense building, and a RimWorld-like economy, compressed into **player-chosen 15 / 30 / 45 / 60 minute operations**, remembered on a **campaign graph**.
+Shorthand: Vampire Survivors combat, survival building, tower defense, remembered like a small RimWorld. The **actual hook** is not the mashup. It is:
 
-You play **Neetmon Gould**, one body. You gather, craft, and raise forts from **blueprints**. Weapons and views are **view-linked** at first (top-down auto-fire, third-person mixed, first-person manual) and later unlock **presets** that equalize the three cameras. The swarm is **inept Goliath robots** — catalog-lethal, behavior-stupid — until a **Sancient** puppets them. Machines cannot think underground until someone plants a **NeetNetNode** (neutrino antenna onto **NNN**, the Neet Node Net). **Nobots** (breakaway machines, no neutrino tech) commit **roborrism** to steal that tech. Your backpack and in-run base **die with the operation**. The **archipelago save** keeps turf, pipelines, and who is running the field. Playstyle is not a playlist: militant can become diplomatic or logistics **by what you do**. Feats feed **one tech tree**. Leaderboards score operations. **Pyron Chrome** civilization and arming Nobots are the same verbs at a later scale.
+> Every run changes the battlefield for the next run.
 
-**Architecture (Approach 1):** two layers, **operation-first**. The GDD describes the full war. The playable spine is the operation. The campaign map is memory. Endgame is later strata of the same systems (nodes, factions, pipelines), not a new game.
+You play **Neetmon Gould**, one body, in an **underground-archipelago**. Killer robots still have Goliath catalogs (sensors, guns, vehicles, swarms). They have **forgotten how to use them**. You are David chased by zombie titans that could end you **if they remembered**.
+
+Machines cannot think underground until someone plants a **NeetNetNode** (neutrino antenna onto **NNN**, the Neet Node Net). That is the radio-on. **NNN is the button.** Before it: the Hole (explore, scavenge, plan, quiet ghosts). After it: the War (machines wake, production, loudness, Sancient possible, occupiers interested, extract gets dangerous).
+
+The swarm is inept until a **Sancient** puppets them. **Nobots** (breakaway machines, no neutrino tech) want that node. Your backpack and in-run base **die with the operation**. The **archipelago save** keeps turf and who is running the field.
+
+**Architecture (Approach 1):** two layers, **operation-first**. The GDD describes the full war. The first playable is a **vertical slice of the causal chain**. Cameras, dual-res building, blueprint sandbox, diplomacy, many biomes, and the full campaign board are **earned after the slice is fun**.
 
 ---
 
-## 2. Key decisions
+## 2. What makes this fun
+
+If a proposed feature does not reinforce one of these, question it.
+
+| Pillar | Every ~30 seconds the player should feel |
+|---|---|
+| **Greed** | “There’s more scrap over there.” |
+| **Dread** | “Should we turn on NNN?” |
+| **Power** | “This fort is becoming ridiculous.” |
+| **Panic** | “The Sancient made them competent.” |
+| **Consequence** | “We lost this site, and now somebody else owns it.” |
+
+NNN is the defining decision of an operation:
+
+**Explore → prepare → decide when to wake the hole → survive what you caused → leave or hold.**
+
+---
+
+## 3. Key decisions
 
 | Decision | Choice | Rationale |
 |---|---|---|
-| Session vs world | Two-layer campaign | Honors both “runs reset” and “RimWorld persistence” |
-| Persistence | Backpack/base/in-run tech reset. Campaign graph + account feats/tree persist | 15–60 min sessions stay clean; war still remembers |
-| Account persistence | Head starts, curves, formations, perk trees, combos — not a kept base | Prebuilts can be scrapped/upgraded in the next drop |
-| Avatar | One Neet: Neetmon Gould | Keeps the VS spine; campaign is still a faction sim |
-| PvP | None in v1. Leaderboards only | PvE horde-hold is the spine |
-| Camera | Live switch top-down / third / first; default steep top-down | Unique spice; s&box Player Controller template already has all three |
-| Combat | View-linked hybrid first; late-tree parity + presets | Early views are actually different games; late game you author your own |
-| Building | Dual-resolution (modules + pieces) + blueprint sandbox + live ghosts | New, not a Rust clone or a TD clone |
-| Space | Underground-archipelago (graph of sites), not one oil field | Robot signal dies underground; NNN is the radio-on lever |
-| Generation | Biome procedural, DF/Noita/RimWorld depth | Resources scarce until tech unlocks deeper strata |
-| Factions | Neets (you), inept Robots, Sancients, Nobots | Inverse competence + hive spikes + third-party carnage |
-| Networking | Host-authoritative Multiplayer even when solo | Co-op later is not a rewrite |
-| Agent workflow | Git + first-party s&box MCP | Claude / Grok / Cursor share files and the live editor |
+| Session vs world | Two-layer campaign | Runs reset; war remembers |
+| Persistence | Backpack/base/in-run tech reset. Site ownership + stocks persist | Failure is interesting |
+| First playable | **Vertical slice** (§11), not full v1 | Prove the causal chain before cameras/economy/diplomacy |
+| Economy (slice + v1) | **Scrap only** | Logistics under pressure, not a spreadsheet |
+| Flavor tags | **Telemetry until systems exist** | Labels without consequences are not a game |
+| Avatar | One Neet: Neetmon Gould | VS spine |
+| PvP | None until much later | PvE horde-hold |
+| Camera (vision) | Live switch top-down / third / first; default steep top-down | Differentiator |
+| Camera (**slice**) | **Top-down only**; pawn is camera-ready | Don’t ship three combat games to find out if one is fun |
+| Combat (slice) | Top-down auto-fire | Classic VS |
+| Combat (later) | View-linked hybrid, then presets | Spice after the loop works |
+| Building (slice) | One module, ghosts, scrap to solidify, NNN as deployable | Fort is part of the threat (loudness) |
+| Building (later) | Dual-res + blueprint sandbox | After slice |
+| Space | Underground-archipelago | Signal dies underground; NNN is the lever |
+| Factions | Neets, inept Robots, Sancients, Nobots | Inverse competence + hive spike + occupiers |
+| Nobots (slice) | Occupancy flag only | Protect “someone else’s field” without a third AI |
+| Nobots (next) | NNN on → they want it → attack/occupy | No diplomacy/barter/Trojan until later |
+| Sancient | Signature enemy: same robots, suddenly competent | Psychological reversal, not a fatter HP bar |
+| Networking | Host-authoritative even when solo | Co-op later is not a rewrite |
+| Agent workflow | Git + first-party s&box MCP | Shared files + live editor |
 
 ---
 
-## 3. s&box environment (non-negotiable)
+## 4. Design invariants vs implementation assumptions
+
+**Invariants** (do not casually change):
+
+- One pawn: Neetmon Gould.
+- Host writes simulation.
+- Dark until NNN; NNN wakes machines and is loud.
+- Inverse competence at spawn; Sancient raises competence, **keeps lethality**, for a window.
+- Operation backpack dies; **site ownership / stocks persist**.
+- Captured production is not deleted.
+- Slice is top-down; later, **one pawn** with switchable views (not three characters).
+- Ghosts are not solid and do not block pathing; built pieces do.
+
+**Assumptions** (ok to change if s&box makes a better path):
+
+- Three `CameraComponent`s + `IsMainCamera` (engine sample). Bind later to built-in `View`.
+- Dynamic `NavMeshArea` as the pathing blocker.
+- Campaign in `FileSystem.Data` JSON.
+- Unit/feat/blueprint defs as `GameResource`.
+- MCP at `http://127.0.0.1:7269/mcp` and the current built-in toolset names.
+- Template: Game – Player Controller.
+
+If an assumption fights the editor, keep the invariant and change the assumption.
+
+---
+
+## 5. s&box environment
 
 Editor install (this PC):
 
@@ -55,331 +118,269 @@ Editor install (this PC):
 - API: https://sbox.game/api/
 - MCP: https://sbox.game/dev/doc/editor/mcp-server
 
-**Create the game from the Game – Player Controller template** (first-person, third-person, and top-down example scenes already ship). Do not start from Empty and reinvent the pawn.
+**Create the game from the Game – Player Controller template.** Do not start from Empty.
 
-| Design | Engine |
+Current working assumptions (not design law):
+
+| Need | Current s&box path |
 |---|---|
 | Game project | Type `game`, ident `local.skyneet.survivors`, title `SkyNeet Survivors` |
-| Cameras | One pawn, three `CameraComponent`s, switch `IsMainCamera` (engine sample). Bind to built-in **`View`** action (`C` / right stick click) |
-| Solo now, co-op later | `GameNetworkType: Multiplayer`, `MinPlayers: 1`, `MaxPlayers` leave 8 for now. Neetmon is `NetworkMode.Object`. Host writes sim |
-| Tick | 50 Hz. Move / build / AI in `OnFixedUpdate`. Camera / look / HUD in `OnUpdate` |
-| Buildings, robots, nodes | `.prefab` + `SceneUtility.Instantiate` / `Clone` |
-| Blueprints, items, feats, biomes, unit defs | Custom `GameResource` types with `[GameResource]` + `[Property]` |
-| Campaign memory | Host `FileSystem.Data` JSON blob. Operation backpack is **not** in that file |
-| AI | `NavMeshAgent` (+ `CharacterController` with `UpdatePosition = false` when collision matters). Sancient is a **director component**, not a second physics world |
-| Solid buildings vs ghosts | Solidified pieces get a **dynamic `NavMeshArea` blocker**. Ghosts do not |
-| HUD / ghost bills | Razor `ScreenPanel` / `WorldPanel` |
-| Input | Named actions only (`Input.Pressed("View")`, etc.). Add game actions in Project Settings |
-| Code | C# components on GameObjects. Hot reload. No Unity APIs, no Godot APIs |
+| Slice camera | One steep top-down camera on the pawn |
+| Later cameras | One pawn, switchable views (`CameraComponent` + `IsMainCamera` is the documented sample) |
+| Solo now, co-op later | `GameNetworkType: Multiplayer`, `MinPlayers: 1`. Neetmon `NetworkMode.Object`. Host writes sim |
+| Tick | 50 Hz. Move / build / AI in `OnFixedUpdate`. Camera / HUD in `OnUpdate` |
+| Spawnables | `.prefab` + instantiate/clone |
+| Data defs | `GameResource` |
+| Campaign memory | Host `FileSystem.Data`. Operation backpack is **not** in that file |
+| AI | Nav mesh agent + competence component. Sancient is a **director**, not a second physics world |
+| HUD | Razor screen/world panels |
+| Input | Named actions only |
+| Code | C# components. Hot reload. No Unity / Godot APIs |
 
-**Do not** load the entire archipelago as one physics scene. An operation is one (or additively streamed) `Scene`. The campaign board is a light scene + Razor + the save blob.
+**Do not** load the entire archipelago as one physics scene. An operation is one scene. The campaign board is data + a light UI.
 
 ---
 
-## 4. Multi-agent contract (above board)
+## 6. Multi-agent contract (above board)
 
 Work does not live only in a chat.
 
-- **Source of truth:** this spec. Then `AGENTS.md`. `CLAUDE.md` and `.cursor/rules/` only point at those files.
-- **Git:** every durable decision is a commit on this repo.
+- **Source of truth:** this spec, then `AGENTS.md`. `CLAUDE.md` and `.cursor/rules/` only point at those files.
+- **Git:** every durable decision is a commit on this repo. `FEEDBACK.md` is review input; accepted points are merged **into this spec**.
 - **s&box MCP (first-party):** Editor → Preferences → MCP Server. Loopback only. Default URL: `http://127.0.0.1:7269/mcp`.
-  - Claude Code: `claude mcp add --transport http sbox http://127.0.0.1:7269/mcp`
-  - Grok Build: HTTP MCP in `~/.grok/config.toml` pointing at that URL
+  - Claude: `claude mcp add --transport http sbox http://127.0.0.1:7269/mcp`
+  - Grok: HTTP MCP in `~/.grok/config.toml`
   - Cursor: same URL
-- **Built-in toolsets on this install:** `scene`, `play`, `asset`, `component`, `package`, `editor` (`compile_status`, `console_command`), `log`.
-- **Game-specific tools** go in `skyneet-survivors/Editor/` as `[McpTool]` / `[McpToolset]`, committed, so they hotload for every agent.
-- **Verify in the editor, not by guessing:** after C# edits, `compile_status`. For a loop: `play_start` → `camera_screenshot` / `scene_tree` → `play_stop`.
-- **No community MCP bridges.** s&box ships the server. Do not copy archived WebSocket bridges into this project.
+- After C# edits: `compile_status`. Smoke: `play_start` → screenshot / `scene_tree` → `play_stop`.
+- **No community MCP bridges.** Game-specific tools go in `skyneet-survivors/Editor/` as `[McpTool]`, committed.
 - **No Unity.** If an API is not in s&box docs/API or `TypeLibrary`, it does not exist.
 
 ---
 
-## 5. Operation loop
+## 7. Operation loop
 
-An **operation** is the Vampire Survivors hour. The campaign map is the memory. You never pick “militant” from a menu.
+NNN is the button. Structure of every operation:
 
-### 5.1 Start
+**The Hole** (pre-NNN): exploration, scavenging, planning, quiet ghosts, gathering.  
+**The War** (post-NNN): machines awaken, production possible, loudness up, Sancient possible, occupiers interested, fortifications matter, extract is dangerous.
 
-From the campaign board (or New Run), Neetmon chooses:
+You never pick “militant” from a menu.
 
-1. **Storm length:** 15 / 30 / 45 / 60 minutes (wall clock, `[HostSync]`).
-2. **Drop site** on the underground-archipelago graph.
+### 7.1 Start
 
-The host loads an **operation scene** generated from that site’s `biomeId + seed + depth`. Backpack is empty except **account head-start kits**. The site is **dark**: robots do not think here until a **NeetNetNode** is planted.
+**Slice:** drop into the one cavern. Storm is **15 minutes**. No board required.
 
-### 5.2 Clock and endings
+**Later:** from the campaign board, choose storm length (15 / 30 / 45 / 60) and a drop site. Host loads an operation scene from `biomeId + seed + depth`. Backpack empty except unlocked head-starts. Site is **dark**.
 
-- **Silent extract:** a volume prefab that does **not** require NNN (elevator / black-tunnel). Early cash-out, smaller score, low ping.
-- **Ride the clock:** survive until the chosen duration for a **full-clear bonus**.
-- **Death:** operation ends. Campaign still writes (a lit abandoned node can be occupied). Score still posts if anything was extracted.
-- This is **not** an extraction-shooter wallet. Extract is one ending, not the genre.
+### 7.2 Clock and endings
 
-### 5.3 Pressure
+- **Silent extract:** a volume that does **not** require NNN. Early cash-out, low ping, smaller score.
+- **Ride the clock:** survive the duration.
+- **Death:** operation ends. Campaign still writes. If NNN was up, **ownership can flip**.
+- Not an extraction-shooter wallet. Extract is one ending, not the genre.
 
-- **Dark:** loot, blueprint ghosts, quiet logistics. Horde is parked wrecks, not VS.
-- **Lit (NNN up):** crafting/automation on; inept Goliaths wake; loudness rises.
-- **Sancient window:** chance scales with storm length and **loudness** (node up, production, gunfire, solidified buildings). During the window, a subset of robots is puppeteered.
-- **Nobot interest:** lit sites on their turf (or adjacent conflict lines) can contest, occupy, or flank.
+### 7.3 Pressure
 
-### 5.4 Emergent flavor
+- **Dark:** loot, ghosts, quiet prep. Robots are parked wrecks.
+- **Lit:** Goliaths wake (inept). Loudness rises. Building itself is loud.
+- **Sancient window:** if the hole is loud enough, one Sancient puppets nearby robots.
+- Occupiers: see §9.4. Slice = ownership flag. Next = simple want-NNN attack.
 
-HUD may **name** the flavor (militant / logistics / diplomatic / subversive / expedition). It does **not** lock inputs. Flavor changes by verbs: shooting, hauling buffers, feeding a pocket until it is a **neutral subsect**, jacking a node for someone else, fattening a camp as **Trojan bait**.
+### 7.4 Flavor (telemetry until earned)
 
-### 5.5 End → campaign
+HUD **may** tag militant / logistics / diplomatic / subversive / expedition from verbs. **Slice and v1: telemetry only.** No mechanical consequence until each tag has **one** locked effect, for example:
 
-Host writes `FileSystem.Data`:
+| Flavor | Later consequence (not slice) |
+|---|---|
+| Militant | Combat feats / weapon progression |
+| Logistics | Better throughput / cheaper ghosts |
+| Diplomatic | Neutral pockets more useful |
+| Subversive | Node sabotage / jack tools |
+| Expedition | Deeper strata access |
 
-- Who owns the site
-- Whether a node is up
-- Pipeline / stockpile contents (not deleted; occupier runs them)
-- Loudness residue / conflict flags
+Do not implement those effects until the slice loop is fun.
 
-Feats from this run credit the **shared tech tree**. A leaderboard row posts: duration chosen, survived time, extracted value, full-clear flag, flavor tags, feats triggered.
+### 7.5 End → campaign
 
----
+Host writes persistent site state. Minimum for the slice: **`owner`** (and whether the node is still up). Later: stockpile, pipelines, loudness residue.
 
-## 6. Building and blueprints
-
-One system, two grain sizes, plus a planner that is not the campaign save.
-
-### 6.1 Pieces and modules
-
-Everything placeable is a **prefab**.
-
-- **Piece:** one wall, floor, door, window, stair, or deployable (workbench, turret, chest, NeetNetNode).
-- **Module:** a prefab of pieces (room, wall-run, turret nest).
-
-**Top-down** stamps **modules** on a local snap grid. **First-person** places **pieces** (same grid, tighter aim). **Third-person** can do both, slower, until presets. Modules **disassemble into pieces**. Pieces **upgrade in place**. Head-start unlocks are **starter modules**, not a kept base.
-
-v1 uses **stacked prefabs**, not a voxel mesher. Snap is component math, not Hammer.
-
-### 6.2 Blueprint sandbox
-
-Scene: `scenes/blueprint_sandbox.scene`. Empty plot. No storm. **No turf write**. Draft with the same dual-res tools. Save a **`Blueprint` GameResource**: local transforms, module/piece ids, **dependency graph**, bill of materials.
-
-### 6.3 Live ghosts
-
-Placing a blueprint in an operation stamps **ghost** instances:
-
-- Translucent, no collision, **not** nav blockers
-- Razor `WorldPanel` shows missing resources
-- **Build order** from the graph: foundations → walls → roof → deployables
-- Next legal nodes highlighted; illegal nodes locked
-- Spending scrap **solidifies**: enable collider/renderer, add dynamic `NavMeshArea` blocker
-- **Deviate:** extra pieces, skip a wing, scrap a ghost for partial refund
-
-**NNN is a deployable piece**, last in many graphs on purpose — lighting the hole is a decision.
-
-### 6.4 Authority
-
-Only the host places, solidifies, or scraps. Clients send `[Rpc.Host]`. Placement fails if unsupported (floating wall) or if the piece needs power the site does not have.
-
-### 6.5 Tiers
-
-Data on the prefab, gated by the tech tree: **scrap → rack → plate → Pyron Chrome** (last is endgame strata, not v1 craft).
+Score / feats / leaderboards are **after** the slice. The keep is the graph, not the score.
 
 ---
 
-## 7. Factions, NNN, swarm
+## 8. Building and blueprints
 
-Four powers. Only Neets are a player body in v1.
+### 8.1 Slice
 
-### 7.1 Dark vs lit
+- **One resource: scrap.**
+- **One module** (a small fort chunk) + **NNN as a deployable**.
+- Ghost of that module: translucent, no collision, no pathing block. Spend scrap → solid. Solid is loud and blocks pathing.
+- No blueprint sandbox, no piece-level dual-res, no extra currencies (fuel, food, ammo, refined metal).
 
-Underground, machine **signals are dead**. In the dark, robots are hulks / parked wrecks — lootable. Planting a **NeetNetNode** joins **NNN**, powers the site, **and** lets machines think here.
+### 8.2 Later vision (unchanged, not first build)
 
-### 7.2 Robots (Goliaths)
+- **Piece** vs **module**. Top-down stamps modules; first-person places pieces; third-person in between. Disassemble / upgrade.
+- Blueprint sandbox scene; `Blueprint` data asset; live ghosts with build-order graph; deviate / scrap refund.
+- Tiers: scrap → rack → plate → Pyron Chrome (endgame).
+- Host-only place/solidify/scrap.
 
-Unit defs (`GameResource`) carry **Lethality** (0–1) and **Competence** (0–1).
-
-**Baseline spawn rule:** `Competence = 1 - Lethality` (inverse). High-power units miss, friendly-fire, telegraph, wander. Low-power units aim but tickle. They can still **accidentally** flatten Neetmon. Host simulates via a `Competence` component (aim cone, delay, scatter, friendly-fire chance).
-
-### 7.3 Sancients
-
-Rare spawn: one unit that is *wrong*. Personally weak (low Lethality). Fully aware of the catalog. For a **window** (bot count, duration, op type — scales with storm length and loudness) it **puppets** nearby robots: **Competence raised toward 1, Lethality unchanged**. That is the spike: Goliaths temporarily know their potential. When the window ends, stats revert. Killing or jacking the Sancient dumps the swarm.
-
-Sancient is a **director GameObject** (`SancientDirector` component), not a second physics world.
-
-### 7.4 Nobots
-
-Breakaways. **No neutrino tech.** They do not obey Sancients. They want the node. **Roborrism:** carnage to seize NNN — rush a lit site, pile in with the inept army without coordinating, or flank off turf. They **run** captured production (occupancy), they do not delete it.
-
-Diplomatic / subversive verbs can turn a Nobot pocket into a **neutral subsect** (barter, radicalize, compete, Trojan bait). v1 stub: don’t shoot + dump scrap + optional node-share can flip a small pack’s turf tag to Neutral.
-
-### 7.5 Ping (host)
-
-Loudness = node up + production + gunfire + solidified buildings. Loudness raises Sancient chance and Nobot interest on adjacent campaign turf. Silent extract in the dark barely pings.
-
-### 7.6 Later strata (specified, not v1)
-
-Arming Nobots with neutrino tech so they take the player’s slot as main rival; **Pyron Chrome** alloy bubble around Neet civilization; thieves, insurgents, breakaway gangs on logistics; warfront snowball (if Nobots *or* Sancients get too strong, they reopen a front on you). Same factions, bigger graph.
+NNN stays **last in the graph on purpose**. Lighting the hole is a decision.
 
 ---
 
-## 8. Campaign map, biomes, logistics
+## 9. Factions, NNN, swarm
 
-The archipelago is a **save**, not a single Source 2 map. Neetmon never walks the whole world. He **drops**.
+### 9.1 Dark vs lit
 
-### 8.1 Graph
+Underground, machine **signals are dead**. Planting NNN joins NNN, powers the site, **and** lets machines think here.
 
-`FileSystem.Data` on the host:
+### 9.2 Robots (Goliaths)
 
-- **Sites** (nodes): `id`, `biomeId`, `seed`, `depth`, `owner`, `nodeUp`, `loudness`, `stockpile`
-- **Tunnels / pipelines** (edges): `from`, `to`, `throughput`, `buffer`
-- **Owners:** `Neet | Robot | SancientOp | Nobot | Neutral | Contested`
+**Lethality** (0–1) and **Competence** (0–1).
 
-Captured production is **not deleted**. The new owner runs it, scraps it, or trades it.
+**Spawn rule:** `Competence = 1 - Lethality`. High-power units miss, wander, telegraph, friendly-fire. Low-power units aim but tickle. They can still **accidentally** flatten you.
 
-### 8.2 Board
+The joke is the game: “the robots are idiots” is **normally safe**. The Sancient periodically **violates that**.
 
-Between operations: campaign scene + Razor. Cavern-islands, depth layers, gang-turf colors, conflict lines. Pick site + storm length → generate/load operation scene from seed → on end, write delta → return to board.
+### 9.3 Sancients (signature enemy)
 
-### 8.3 Biomes and depth
+Rare: one unit that is *wrong*. Personally weak. Fully aware of the catalog.
 
-Biome-based procedural generation with DF / Noita / RimWorld **depth**: wreck-server halls, flooded pump galleries, ore veins, junk suburbs, silent dark.
+**Window:** puppets nearby robots — **Competence → 1, Lethality unchanged**. Same walking artillery that bounced off a wall now **turns, acquires, waits, fires**. Window ends → revert. Kill/jack the Sancient → dump the swarm.
 
-**v1:** one biome family, a handful of sites, one pipeline, two depth strata (shallow scrap vs one locked deeper pocket). Tech later unlocks **sensors and boring machines** so new sites appear or existing ones gain a lower level. Early game is scarce on purpose.
+Preserve the psychological reversal. The Sancient is not “a bigger HP bar.” It is the moment the catalog remembers itself.
 
-### 8.4 Logistics
+Director object (implementation assumption: a component on a GameObject). Not a second physics world.
 
-A pipeline is an edge with throughput and a stockpile, not a pretty line. If Nobots take the refinery, the next op in that region is poorer and they are richer. Raiding a field does not vaporize barrels — they are on the floor or in the occupier’s buffer.
+### 9.4 Nobots
 
-### 8.5 Time
+They want **your NNN**. That is enough.
 
-Not an MMO sim ticking in the menu. Time advances when **operations resolve** (later: a short warfront tick on the board). Generation is deterministic from `biomeId + seed + depth` so agents and replays can rebuild the hole.
+**Slice:** no Nobot AI. If you die (or extract) with the node up, `owner` becomes **Occupied**. Next drop, the module/production is still there, **not yours**.
 
----
+**Next (after slice is fun):** NNN comes online → occupiers want it → they attack/occupy → whoever controls it owns the production. Stupidly simple.
 
-## 9. Meta: feats, tech tree, cameras, scoring
-
-The operation backpack dies. The account only changes how the next drop **starts, scales, and sees**.
-
-### 9.1 Feats
-
-Unlocks come from **accomplishments**, not a single XP puddle. Examples:
-
-- Survive a 15 in the dark
-- Full-clear a 60 with a node up
-- Cash out without firing
-- Flip a site to a neutral subsect
-- Kill or jack a Sancient
-- Stamp a blueprint and fill it
-- Extract after Trojan bait
-
-Different **end types** pay **different feat tracks** (sprint, hold, diplomat, engineer, ghost). A feat can **gate another style** (a 15-minute ghost feat unlocks a turret used in 60-minute holds).
-
-### 9.2 Tech tree
-
-One tree, many branches. Nodes are `GameResource`. Progress lives in `FileSystem.Data` beside the campaign graph.
-
-Branches: head-start kits, faster in-run increments, new formations, new perk trees, combos, camera presets.
-
-In-run VS-style cards **reset** every operation. Account curves can bias card rarity and ghost cost. Combos between in-run cards and account perks are the long spice.
-
-### 9.3 Cameras
-
-- Default: steep **top-down** (template-like: high, looking down ~75°, offset back).
-- **`View`** cycles Top-down → Third-person → First-person, live, one pawn.
-- **Early tree:** views are unequal:
-  - Top-down: full auto-fire, stamp modules, best horde read
-  - Third-person: auto + a manual skill/reload you can time
-  - First-person: manual gunplay, piece-precise building; body auto-weapons weaker
-- **Late tree:** unlock **parity** plus **toggles/presets** (“Horde Commander”, “Fort Engineer”, “CQC”).
-- Implementation: three `CameraComponent`s + `ViewLoadout` reading the preset. **Not** three player pawns.
-
-### 9.4 Scoring / leaderboards
-
-Posted on operation end, even on death if something was extracted. Columns: duration chosen, survived time, extracted value, full-clear flag, flavor tags, feats triggered.
-
-Score is bragging rights. The campaign graph is the real keep.
-
-v1: local/host stats is enough. Wire `LeaderboardType` / `Sandbox.Services` when turning it on in `.sbproj`.
+**Later (not v1):** roborrism flavors, barter, radicalize, Trojan bait, arming Nobots with neutrino tech, Pyron Chrome, warfront snowball.
 
 ---
 
-## 10. v1 slice (what we actually build first)
+## 10. Campaign, biomes, logistics
 
-Playable in the editor, host-authoritative, MCP-verifiable.
+The archipelago is a **save**, not a Source 2 open world. Neetmon **drops**.
 
-**In v1:**
+**Slice:** one site. Persist `owner` (+ node up). If occupied, the solidified module is still in the hole.
 
-- Neetmon Gould pawn + three cameras (`View` cycle) + view-linked combat
-- Procedural cavern: **one biome family**, handful of sites, **two depth strata**, **one pipeline**
-- Storm 15/30/45/60, silent extract vs full clear vs death
-- Dual-res building + blueprint sandbox + live ghosts + NNN as last-in-graph deployable
-- Dark until NNN; inept robots; **one Sancient window** if loud
-- Nobots can **contest a lit site** (simple occupier)
-- Campaign `FileSystem.Data` remembers turf/stocks
-- A few feats → stub tech tree (one head-start kit, one curve)
-- Leaderboard row on end (local/host)
-- Campaign board UI good enough to pick a site and duration
+**Vision:** graph of sites and pipelines; owners `Neet | Occupied | Robot | SancientOp | Nobot | Neutral | Contested`; captured production runs for the new owner. Board UI later. Time advances when operations resolve, not in the menu. Generation later from `biomeId + seed + depth`.
 
-**Not in v1:** Pyron Chrome, arming Nobots, many biomes, colony god, PvP, full diplomacy, warfront snowball, voxel mesher, MMO ticking.
-
-v1 must still **feel** like: David vs inept Goliaths, radio-on is scary, ghosts want scrap, the field you lose is still *someone’s* field.
+**Economy:** scrap is the only resource until the slice (and likely v1) proves the loop. No extra currencies.
 
 ---
 
-## 11. Repository and project layout
+## 11. Vertical slice (first playable — build this)
+
+Prove the causal chain in **one 15-minute hole**. If this is not fun, cameras, blueprints, and the campaign board will not save it.
+
+| Piece | Slice |
+|---|---|
+| Space | **One** hand-authored (or lightly generated) cavern |
+| Storm | **15 minutes** only |
+| Camera | **Top-down** only; pawn structured so views can be added |
+| Resource | **Scrap** |
+| Building | **One** module + ghost + solidify |
+| Weapon | **One** auto-weapon |
+| Robot | **One** Goliath prefab, inverse competence |
+| NNN | **One** deployable that wakes the hole |
+| Sancient | **One** window if loud / NNN up |
+| Extract | **One** silent extract volume |
+| Persistence | **One** site `owner` flag (and node-up) |
+
+**Feel target:** greed for scrap, dread of the button, inept Goliaths you laugh at, panic when the Sancient arrives, consequence when the next drop shows **their** fort.
+
+**Not in the slice:** third/first person, view-linked combat, dual-res pieces, blueprint sandbox, multiple durations, procedural biomes, pipelines, feats/tech tree, leaderboards, Nobot agents, diplomacy, campaign board UI, extra currencies.
+
+Host-authoritative. MCP-verifiable (`play_start` through extract/death/NNN/Sancient).
+
+---
+
+## 12. v1 (only after the slice is fun)
+
+Thin campaign on the **same** systems:
+
+- A handful of sites, still one biome family, still **scrap**
+- 15/30/45/60 optional
+- Simple occupier that walks to a lit NNN and claims the site
+- Campaign file with owner + stockpile; a board good enough to pick a site
+- Stub feats optional, not required for v1 ship-to-self
+
+**Still not v1:** three cameras (unless slice was trivial to extend), blueprint sandbox, dual-res, Pyron Chrome, arming Nobots, many biomes, colony god, PvP, full diplomacy, warfront snowball, voxel mesher, MMO ticking, extra currencies, flavor mechanics.
+
+---
+
+## 13. Meta (after v1)
+
+Account changes how the next drop **starts, scales, and sees** — never a kept base.
+
+- Feats as accomplishments, different tracks per end type, gates across styles
+- One tech tree: head-starts, curves, formations, perk trees, combos, **then** camera presets
+- In-run VS cards reset
+- Cameras: add third, then first, on the **same pawn**; early views unequal; late parity + presets
+- Leaderboards are bragging rights; the graph is the keep
+
+---
+
+## 14. Repository layout
 
 ```
 GrokPortal/
   README.md
-  AGENTS.md                          # agent contract (all tools)
-  CLAUDE.md                          # pointer only
-  .cursor/rules/skyneet.mdc          # pointer only
-  .gitignore
+  AGENTS.md
+  CLAUDE.md
+  FEEDBACK.md                        # review input; do not treat as spec
+  .cursor/rules/skyneet.mdc
   docs/superpowers/specs/            # this GDD
-  docs/superpowers/plans/            # implementation plans (later)
-  skyneet-survivors/                 # s&box game project (scaffold after spec approval)
-    <ident>.sbproj
-    Assets/scenes/                   # operation, campaign_board, blueprint_sandbox
-    Assets/prefabs/
-    Assets/data/                     # GameResource defs
-    Code/                            # gameplay components
-    Editor/                          # editor tools + [McpTool] helpers
+  docs/superpowers/plans/
+  skyneet-survivors/                 # s&box project (scaffold next)
 ```
 
-s&box editor opens **`skyneet-survivors/`**, not the repo root.
-
-`.gitignore` follows the official s&box template (`.csproj`, `.sln`/`.slnx`, `bin/`, `obj/`, `*.generated.*`, compiled `*_c` assets, `.sbox/`).
+s&box editor opens **`skyneet-survivors/`**. `.gitignore` follows the official s&box template.
 
 ---
 
-## 12. Implementation order (high-level)
+## 15. Implementation order
 
-Not a task plan. Order for the forthcoming plan:
+Not a task plan. The **plan must implement §11 only** until the slice is fun.
 
-1. Scaffold s&box Player Controller project into `skyneet-survivors/`, ident, git, MCP smoke (`compile_status`, `play_start`).
-2. Pawn + three-camera `View` cycle on a test cavern.
-3. Storm clock + silent extract + death/end + score print.
-4. Dual-res place/ghost/solidify + one module prefab + dynamic nav blocker.
-5. Blueprint sandbox save/load `GameResource`.
-6. Dark/lit + NeetNetNode wakes inept robots (competence inversion).
-7. One Sancient director window.
-8. Campaign graph save + board pick site + write occupancy (including the one pipeline).
-9. Stub feats/tree + one head-start kit.
-10. Nobot occupier contest on a lit site.
+1. Scaffold Player Controller project into `skyneet-survivors/`, ident, MCP smoke.
+2. Pawn + **top-down** camera on the one cavern (camera-ready, not three views).
+3. Move + **one** auto-weapon + **one** inept Goliath.
+4. Scrap pickup + **one** module ghost/solidify (loudness on solidify).
+5. 15-minute clock + silent extract + death end.
+6. NNN deployable: dark → lit, wakes Goliaths.
+7. Sancient window: same Goliaths become competent.
+8. Persist `owner` (Occupied if you leave/die with NNN up). Next playthrough the module is still there, not yours.
 
-Each step is host-authoritative and MCP-checkable before the next.
+Stop. Play it. If the 15-minute “wake the hole and survive what you caused” loop works, **then** earn occupier AI, more sites, more durations, cameras, blueprints.
 
 ---
 
-## 13. Non-goals
+## 16. Non-goals (until explicitly earned)
 
-- Unity / Godot / Unreal ports
-- First-person-only Rust clone
-- Always-on MMO simulation
+- Shipping three cameras in the slice
+- Flavor as mechanics
+- Extra currencies
+- Nobot diplomacy / Trojan / radicalize
+- Unity / Godot / Unreal
 - Client-authored combat or building
 - Community MCP bridges
-- Chat-only design after this file exists
-- Shipping Pyron Chrome in v1
+- Chat-only design
+- Pyron Chrome in slice or v1
+- Treating mashup shorthand as the marketing hook
 
 ---
 
-## 14. Spec self-review
+## 17. Spec self-review
 
-- **Placeholders:** none. Remaining “later strata” are named systems (Pyron Chrome, arming Nobots, warfront tick), not TBDs.
-- **Consistency:** backpack reset vs campaign persist; NNN as radio-on; cameras one pawn; host authority; v1 is a thin cut of the same systems.
-- **Scope:** one GDD, two layers, v1 slice explicit. Implementation plan should cover v1 only.
-- **Ambiguity locked:** extract is silent volume not NNN; competence inverse at spawn; Sancient raises competence and keeps lethality; time does not tick in the menu; repo root is GrokPortal, s&box project is `skyneet-survivors/`.
+- **Placeholders:** none. Later strata are named.
+- **Feedback absorbed:** smaller first playable; cameras deferred; flavor = telemetry; scrap-only; NNN as the button; Sancient as signature reversal; Nobots occupancy-first; invariants vs assumptions; fun pillars; “someone else’s field” protected.
+- **Consistency:** backpack reset vs site persist; competence inverse; Sancient keeps lethality; slice ⊂ v1 ⊂ vision.
+- **Scope of next plan:** §11 vertical slice only.

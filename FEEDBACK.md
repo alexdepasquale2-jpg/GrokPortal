@@ -1,3 +1,7 @@
+Status: **absorbed into the spec** (2026-08-22 amendment of `docs/superpowers/specs/2026-08-22-skyneet-survivors-design.md`). Keep this file as the original review. Do not treat it as a second source of truth.
+
+---
+
 I read the whole spec, not just the opening sections. My short take: I think this is a genuinely strong game concept, and the spec is unusually good at preserving the identity of the game while still giving an implementation agent concrete constraints. The biggest risk isn't that the idea is bad; it's that there are too many good ideas competing to become the first playable game.
 
 I reviewed the full design spec on GitHub
