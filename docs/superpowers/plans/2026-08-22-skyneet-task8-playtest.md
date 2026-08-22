@@ -36,7 +36,7 @@ Screenshot: pad + HUD `ENDED extract`.
 6. Die or clock-out with NNN up. `ENDED death|clock`. OWNER Occupied. Log about leftover scrap.
 
 **Pass:** the button felt like a mistake you chose; the fort mattered; the catalog waking was the same robot, not a new HP bar.  
-**Fail:** Goliath was already accurate in the dark, or the Sancient is just a fatter box, or the fort does not block.
+**Fail:** Goliath was already accurate in the dark, or the Sancient is just a fatter box, or the fort does not block **you or the Goliath**. A wall that only stops the player is not power (Claude review e5800ee).
 
 Screenshot: yellow Goliath + `THEY REMEMBER`, then the end line.
 
