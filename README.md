@@ -21,6 +21,16 @@ The s&box project lives in [`skyneet-survivors/`](skyneet-survivors/). Open **th
 
 **First playable** is the vertical slice in spec §11 (one 15-minute hole, top-down, scrap, NNN as the button). Not three cameras.
 
+## Documents
+
+| File | What it is |
+|---|---|
+| [`docs/VISION.md`](docs/VISION.md) | **The whole game at full scale.** Start here for what this is building toward |
+| [`docs/SCOPE-LEDGER.md`](docs/SCOPE-LEDGER.md) | Vision vs. what actually exists. The measuring stick |
+| `docs/superpowers/specs/2026-08-22-…-design.md` | The design spec — slice-first, the build contract |
+| `docs/superpowers/plans/…-v1-original.md` | **Frozen** original v1 plan. Never edited |
+| `docs/superpowers/plans/2026-08-22-skyneet-survivors.md` | Living plan, ticked as tasks land |
+
 ## Branch
 
 `main` — default and the trunk everything lands on.
