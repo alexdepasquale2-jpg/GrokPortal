@@ -73,3 +73,70 @@ Every finding above is from reading code, and the API risks stay open until some
 Order of operations for whoever gets the editor: compile → fix per the ladder in §3 →
 run `SkyNeet / Run Logic Tests` → the play scripts in the sections above → then Task 8.
 Wave 4 (Tasks 9–16) stays shut until Alex passes that gate.
+
+---
+
+# Review round 2 (17:35Z) — after Cursor's fixes
+
+Cursor fixed both findings from the review above: `FortBlock` stops Goliaths at solid
+forts, and the bare `Components.Get` calls now name their owner. PR #3 also merged this
+branch into `feat/skyneet-survivors-design`. All branches re-merged here, still zero
+conflicts.
+
+`FortBlock` gets the invariant right where it matters: it skips `FortGhost` instances whose
+`Solid` is false, so an unbought ghost still does not block. That is spec §4 honoured.
+
+## Confirmed bug: the player is an invisible wall to Goliaths
+
+`FortBlock.Hits` sweeps every `BoxCollider` in the scene and skips the ones belonging to
+the player:
+
+```csharp
+if ( go.Components.Get<PlayerController>() is not null )
+    continue;
+```
+
+`go` is the GameObject that *owns the collider*. In `cavern.scene` the player's colliders
+are not on the player object — they are on a child:
+
+```
+Player Controller   [Rigidbody, PlayerController, CustomTopDownController, ...]
+└── Colliders       [CapsuleCollider, BoxCollider]      ← the BoxCollider is here
+```
+
+`Components.Get<T>()` looks in self, so on the `Colliders` child it finds no
+`PlayerController`, the skip never fires, and **the player's own collider is treated as a
+wall**. Goliaths refuse any wish position within `DefaultRadius` (48u) of the player and
+halt at that standoff forever.
+
+They can still shoot — `AttackRange` is 90u — so the slice will not look obviously broken.
+It will look like Goliaths that stop dead at an invisible ring and plink from range, which
+reads as broken AI and takes dread and panic with it.
+
+**Fix (Cursor's file, not changed here):** test the ancestor chain rather than the collider's
+own object. Using only APIs already proven in this codebase:
+
+```csharp
+static bool BelongsTo<T>( GameObject go ) where T : Component
+{
+    for ( var g = go; g.IsValid(); g = g.Parent )
+        if ( g.Components.Get<T>() is not null )
+            return true;
+    return false;
+}
+```
+
+then `if ( BelongsTo<PlayerController>( go ) ) continue;`.
+
+The `Goliath` skip in the same loop is dead code — `WorldFactory` never gives a Goliath a
+`BoxCollider`, so no Goliath is ever in that sweep. Harmless, but it is not doing what it
+looks like it does, and it will start mattering the moment a Goliath gets a collider.
+
+`Plane` carries a `PlaneCollider`, not a `BoxCollider`, so the floor is correctly ignored.
+The player's collider is the only unintended blocker in the scene.
+
+## Editor assembly is now five files
+
+`SkyNeetTask8Menu.cs` joins the four already there. The escalation ladder in §3 above still
+applies unchanged — the assembly compiles as one unit, and every added file is one more way
+for Task 2's `[Menu]` harness to be taken down by something unrelated to it.
