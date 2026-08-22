@@ -1,6 +1,6 @@
 /// <summary>
 /// Editor-only inverse-competence checks. Menu: SkyNeet → Run Logic Tests.
-/// DisplayDialog needs the okay-button arg on current s&box; the plan's two-arg call would not compile.
+/// DisplayDialog needs the okay-button arg on current editor API; the plan's two-arg call would not compile.
 /// </summary>
 public static class SkyNeetLogicTests
 {
