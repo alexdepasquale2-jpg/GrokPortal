@@ -64,8 +64,9 @@ tint is one line: `WorldFactory.OccupiedFortTint`.
 2. **death** — plant NNN, let a Goliath kill you → `ENDED death`.
 3. **clock** — set `StormSeconds = 8` on the SkyNeet object once → `ENDED clock`, then revert.
 
-After any end, walking over scrap must **not** raise the counter and the fort must
-**not** be buyable. That freeze is the fix; before it, the saved stockpile was a lie.
+After any end, walking over scrap must **not** raise the counter, the fort must
+**not** be buyable, and **the pawn must not move**. That freeze is the fix; before it the
+saved stockpile was a lie and you could stroll around the hole after dying in it.
 
 ## 4. Task 5 — the occupancy roundtrip
 
