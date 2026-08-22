@@ -80,8 +80,11 @@ public sealed class Goliath : Component
 			// Inept wander: competence 1 walks straight; low competence weaves.
 			var dir = toPlayer.Normal;
 			var weave = Vector3.Up.Cross( dir ) * MathF.Sin( Time.Now * 1.7f ) * (1f - Competence) * 40f;
-			WorldPosition += (dir * MoveSpeed + weave) * Time.Delta;
-			WorldPosition = WorldPosition.WithZ( 40f );
+			var wish = (WorldPosition + (dir * MoveSpeed + weave) * Time.Delta).WithZ( 40f );
+			// Transform writes ignore BoxCollider. FortBlock is the slice stand-in so a
+			// paid-for wall actually keeps this body out (spec §4 / power pillar).
+			if ( !FortBlock.Hits( Scene, GameObject, wish ) )
+				WorldPosition = wish;
 		}
 
 		_attackCd -= Time.Delta;
