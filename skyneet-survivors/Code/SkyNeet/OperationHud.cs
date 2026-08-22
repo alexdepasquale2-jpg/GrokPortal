@@ -1,25 +1,48 @@
-public sealed partial class OperationHud : PanelComponent
+using Sandbox.UI;
+
+/// <summary>
+/// Screen HUD without Razor. Razor codegen was a separate class, so markup could not see C# members and the engine failed to boot.
+/// </summary>
+public sealed class OperationHud : PanelComponent
 {
-	OperationDirector D => Scene.GetAllComponents<OperationDirector>().FirstOrDefault();
+	Label _body;
 
-	string ClockText
+	protected override void OnUpdate()
 	{
-		get
+		if ( Panel is null )
+			return;
+
+		if ( _body is null )
 		{
-			if ( D is null )
-				return "--:--";
-			var t = MathF.Max( D.TimeLeft, 0f );
-			return $"{(int)(t / 60):00}:{(int)(t % 60):00}";
+			Panel.Style.Position = PositionMode.Absolute;
+			Panel.Style.Left = 24;
+			Panel.Style.Top = 24;
+			Panel.Style.Padding = 12;
+			Panel.Style.BackgroundColor = Color.Black.WithAlpha( 0.7f );
+			Panel.Style.FontColor = Color.White;
+			Panel.Style.FontSize = 18;
+			Panel.Style.FontFamily = "Poppins";
+			Panel.Style.WhiteSpace = WhiteSpace.PreWrap;
+			_body = Panel.Add.Label( "" );
 		}
+
+		var d = Scene.GetAllComponents<OperationDirector>().FirstOrDefault();
+		if ( d is null )
+		{
+			_body.Text = "SKYNEET";
+			return;
+		}
+
+		var t = MathF.Max( d.TimeLeft, 0f );
+		var clock = $"{(int)(t / 60):00}:{(int)(t % 60):00}";
+		var node = d.NodeUp ? "ONLINE" : "DARK";
+		var sancient = d.SancientActive ? "SANCIENT AWAKE" : "";
+		var ended = d.OperationEnded ? $"ENDED {d.EndReason}" : "";
+
+		_body.Text =
+			$"SKYNEET  {clock}  |  SCRAP {d.Scrap}\n" +
+			$"NNN {node}  LOUD {d.Loudness:0.0}  {sancient}\n" +
+			$"OWNER {d.SiteOwner}  {ended}\n" +
+			"E: plant NNN / raise fort   extract: hold the dark pad";
 	}
-
-	string ScrapText => D is null ? "0" : D.Scrap.ToString();
-	string NodeText => D is not null && D.NodeUp ? "ONLINE" : "DARK";
-	string LoudText => D is null ? "0" : D.Loudness.ToString( "0.0" );
-	string SancientText => D is not null && D.SancientActive ? "SANCIENT AWAKE" : "";
-	string OwnerText => D?.SiteOwner ?? "?";
-	string EndText => D is not null && D.OperationEnded ? $"ENDED {D.EndReason}" : "";
-
-	protected override int BuildHash() =>
-		HashCode.Combine( ClockText, ScrapText, NodeText, LoudText, SancientText, OwnerText, EndText );
 }
