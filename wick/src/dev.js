@@ -38,9 +38,11 @@ export class Dev {
       await this.reload();
     }
     if (input.consume("Digit5") || input.consume("Numpad5")) {
+      await this.catalog.refreshIndex();
       const id = this.catalog.nextId(this.game.levelId);
       this.game.bootLevel(id);
       this.game.status = "play";
+      this.lastJson = "";
       this.note = id;
     }
     if (input.consume("Digit6") || input.consume("Numpad6")) {

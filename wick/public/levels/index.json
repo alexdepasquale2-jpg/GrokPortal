@@ -1,3 +1,8 @@
 {
-  "ids": ["cellar", "nave", "crypt"]
+  "ids": [
+    "cellar",
+    "nave",
+    "crypt",
+    "well"
+  ]
 }

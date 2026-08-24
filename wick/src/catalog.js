@@ -29,11 +29,23 @@ export class Catalog {
   }
 
   async reload(id) {
+    await this.refreshIndex();
     const level = await fetch(`/levels/${id}.json?t=${Date.now()}`).then((r) => r.json());
     const err = isComplete(level);
     if (err) throw new Error(err);
     this.byId[id] = level;
     if (!this.ids.includes(id)) this.ids.push(id);
     return level;
+  }
+
+  async refreshIndex() {
+    const index = await fetch(`/levels/index.json?t=${Date.now()}`).then((r) => r.json());
+    for (const id of index.ids) {
+      if (!this.byId[id]) {
+        const level = await fetch(`/levels/${id}.json?t=${Date.now()}`).then((r) => r.json());
+        this.byId[id] = level;
+      }
+    }
+    this.ids = index.ids.slice();
   }
 }
