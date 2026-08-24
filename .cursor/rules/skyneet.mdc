@@ -1,8 +1,12 @@
 ---
-description: SkyNeet Survivors / GrokPortal agent contract
+description: GrokPortal agent contract (Wick + SkyNeet)
 alwaysApply: true
 ---
 
-Read `AGENTS.md` and `docs/superpowers/specs/2026-08-22-skyneet-survivors-design.md` before any work.
+Read `AGENTS.md` before any work.
 
-This is an s&box game (C# / Source 2), not Unity. Editor MCP: `http://127.0.0.1:7269/mcp`. Open `skyneet-survivors/` in the s&box editor, not the repo root.
+Two games: **Wick** (`wick/`) is the browser title for rapid iteration with a cloud agent. **SkyNeet Survivors** (`skyneet-survivors/`) is the s&box title; a cloud agent cannot play it.
+
+If the user wants “add this feature / add a level / iterate now”, work in `wick/` unless they named SkyNeet. Wick how-to: `wick/README.md`.
+
+SkyNeet still follows `docs/superpowers/specs/2026-08-22-skyneet-survivors-design.md`. Open `skyneet-survivors/` in the s&box editor, not the repo root. MCP: `http://127.0.0.1:7269/mcp`.

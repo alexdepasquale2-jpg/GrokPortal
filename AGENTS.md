@@ -1,19 +1,37 @@
-# Agent contract — GrokPortal / SkyNeet Survivors
+# Agent contract — GrokPortal
 
-Development is **Claude Code, solo**, as of 2026-08-22. Grok Build (hit its limits) and
-Cursor (disabled) are no longer working this repo. The multi-agent file-ownership protocol
-they used is retired — the lock file is deleted and the dispatch map in the plan is history,
-not instruction. Read this file and the spec before editing.
+Two games live here. Use the one the user is asking for.
 
-## Source of truth
+1. **Wick** (`wick/`) — browser game. This is the **rapid iterate** loop: an agent can run it, change it, and show a result in the same session. How-to: `wick/README.md`.
+2. **SkyNeet Survivors** (`skyneet-survivors/`) — s&box. A cloud agent cannot compile or play it. Spec below.
+
+If the user wants “add this, boom I can see it”, work in **Wick** unless they named SkyNeet.
+
+Development of SkyNeet is **Claude Code, solo**, as of 2026-08-22. The old multi-agent file-ownership protocol is retired.
+
+## Wick — snappy loop (browser)
+
+```
+cd wick && npm install && npm run dev
+```
+
+Open `http://127.0.0.1:5173`.
+
+1. **Feature** — edit `wick/src/*.js`, save. Vite reloads.
+2. **Level** — edit `wick/public/levels/{id}.json` or `npm run new-level -- id`. The game polls JSON (~1s) or press **4**.
+3. **Jump** — DEV keys 1–9. `?playtest=1` turns them off.
+
+Do not port Wick to s&box. It exists because a cloud session can play a browser game and cannot play s&box.
+
+## Source of truth (SkyNeet)
 
 1. `docs/superpowers/specs/2026-08-22-skyneet-survivors-design.md` — game design
 2. This file — how to work
-3. `docs/superpowers/plans/2026-08-22-skyneet-survivors.md` — task-by-task implementation plan (dispatch one agent per task; Wave 0 is serial)
+3. `docs/superpowers/plans/2026-08-22-skyneet-survivors.md` — task-by-task implementation plan
 
-Do not invent systems that contradict the spec. If the spec must change, amend it in git.
+Do not invent SkyNeet systems that contradict the SkyNeet spec. If that spec must change, amend it in git.
 
-## Engine
+## Engine (SkyNeet)
 
 - **s&box**, not Unity, not Godot.
 - Editor: `C:\Program Files (x86)\Steam\steamapps\common\sbox` (`sbox-dev.exe`).

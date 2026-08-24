@@ -1,5 +1,7 @@
 # Claude Code
 
-Read **`AGENTS.md`** and **`docs/superpowers/specs/2026-08-22-skyneet-survivors-design.md`** before any work.
+Two games: **Wick** (`wick/`, browser, rapid iterate) and **SkyNeet Survivors** (`skyneet-survivors/`, s&box).
 
-This is an **s&box** game (C# / Source 2), not Unity. Editor MCP: `http://127.0.0.1:7269/mcp` — see AGENTS.md. Open `skyneet-survivors/` in the s&box editor, not the repo root.
+If the user wants to iterate now, work in `wick/`. Read `wick/README.md` and `AGENTS.md`.
+
+SkyNeet still requires `docs/superpowers/specs/2026-08-22-skyneet-survivors-design.md`. Editor MCP: `http://127.0.0.1:7269/mcp` — a cloud session cannot reach it.

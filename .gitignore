@@ -30,3 +30,5 @@ Exports/
 *.log
 .grok/*
 !.grok/config.toml
+node_modules/
+wick/dist/

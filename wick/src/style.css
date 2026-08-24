@@ -1,0 +1,27 @@
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: #04050a;
+  color: #e8dcc4;
+  font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+}
+
+#frame {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+
+#game {
+  width: min(96vw, calc(96vh * 960 / 540));
+  height: auto;
+  image-rendering: pixelated;
+  background: #05060a;
+  box-shadow: 0 0 80px #000;
+}
+
+#hud {
+  display: none;
+}

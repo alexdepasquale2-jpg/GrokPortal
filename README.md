@@ -1,16 +1,30 @@
 # GrokPortal
 
-Shared workspace for **SkyNeet Survivors**, an s&box game, and for agents (Grok Build, Claude Code, Cursor) working on it.
+Two games.
+
+## Wick (play this now)
+
+Browser stealth-heist. Steal the last light, hide from the glow-hunters, walk it out.
+
+```
+cd wick && npm install && npm run dev
+```
+
+`http://127.0.0.1:5173` — Space to start. JSON rooms in `wick/public/levels/`. How to iterate: [`wick/README.md`](wick/README.md).
+
+This is the loop a cloud agent can actually run with you. No s&box editor, no 15-minute wait.
 
 ## SkyNeet Survivors
 
 Next-gen Vampire Survivors × survival building × tower defense in an **underground-archipelago** war. You are **Neetmon Gould**. Killer robots still have Goliath bodies; they have forgotten how to use them — until a **Sancient** reminds them.
 
-**Design spec (source of truth):** [`docs/superpowers/specs/2026-08-22-skyneet-survivors-design.md`](docs/superpowers/specs/2026-08-22-skyneet-survivors-design.md)
+s&box project: [`skyneet-survivors/`](skyneet-survivors/). A cloud agent cannot compile or play it.
+
+**Design spec:** [`docs/superpowers/specs/2026-08-22-skyneet-survivors-design.md`](docs/superpowers/specs/2026-08-22-skyneet-survivors-design.md)
 
 **Agent contract:** [`AGENTS.md`](AGENTS.md)
 
-## Engine
+## Engine (SkyNeet)
 
 - [s&box docs](https://sbox.game/dev/doc/)
 - [s&box API](https://sbox.game/api/)
