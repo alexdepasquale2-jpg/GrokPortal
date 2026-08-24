@@ -33,6 +33,7 @@ public sealed class OperationDirector : Component
 			return;
 
 		Campaign = CampaignStore.LoadGraph( CampaignStore.GraphFile, SaveFile );
+		ApplyLevel( LevelCatalog.Resolve( SiteId ) );
 		LastSave = LoadSave();
 		SiteOwner = LastSave.Owner;
 		TimeLeft = StormSeconds;
@@ -198,7 +199,45 @@ public sealed class OperationDirector : Component
 			hud.Components.Create<OperationHud>();
 		}
 
+		if ( Components.Get<DevCheats>() is null )
+			Components.Create<DevCheats>();
+
 		if ( LastSave.Owner == "Occupied" )
 			Log.Info( "[SkyNeet] This field is Occupied. The fort you raised last time is not yours." );
+	}
+
+	void ApplyLevel( LevelDef level )
+	{
+		if ( level is null )
+			return;
+		StormSeconds = level.StormSeconds;
+		StartingScrap = level.StartingScrap;
+	}
+
+	/// <summary>
+	/// DEV: restamp this hole from the current LevelDef and put Neetmon back at the start
+	/// of an operation, without writing the campaign. Slot 9 / site cycle.
+	/// </summary>
+	public void DevResetHole()
+	{
+		if ( IsProxy )
+			return;
+
+		ApplyLevel( LevelCatalog.Resolve( SiteId ) );
+		LastSave = LoadSave();
+		SiteOwner = LastSave.Owner;
+		TimeLeft = StormSeconds;
+		Scrap = StartingScrap;
+		NodeUp = false;
+		Loudness = 0f;
+		SancientActive = false;
+		OperationEnded = false;
+		EndReason = "";
+
+		var health = Scene.GetAllComponents<NeetHealth>().FirstOrDefault();
+		health?.Revive();
+
+		WorldFactory.Rebuild( this );
+		Log.Info( $"[SkyNeet] DEV reset {SiteId}. Owner {SiteOwner}." );
 	}
 }

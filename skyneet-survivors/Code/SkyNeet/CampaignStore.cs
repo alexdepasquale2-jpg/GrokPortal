@@ -20,7 +20,10 @@ public static class CampaignStore
 			{
 				var graph = Json.Deserialize<CampaignGraph>( FileSystem.Data.ReadAllText( path ) );
 				if ( graph is not null && graph.Sites is not null && graph.Sites.Count > 0 )
+				{
+					RegisterCatalog( graph );
 					return graph;
+				}
 			}
 		}
 		catch ( Exception e )
@@ -29,6 +32,7 @@ public static class CampaignStore
 		}
 
 		var fresh = CampaignGraph.DemoThreeSites();
+		RegisterCatalog( fresh );
 
 		if ( !string.IsNullOrEmpty( legacySitePath ) && FileSystem.Data.FileExists( legacySitePath ) )
 		{
@@ -78,6 +82,18 @@ public static class CampaignStore
 		}
 
 		return new CampaignSave();
+	}
+
+	/// <summary>
+	/// A new JSON hole is a new field in the war. Get() creates an untouched Neet record
+	/// without clobbering a site the player already lost.
+	/// </summary>
+	static void RegisterCatalog( CampaignGraph graph )
+	{
+		if ( graph is null )
+			return;
+		foreach ( var id in LevelCatalog.AllIds() )
+			graph.Get( id );
 	}
 
 }

@@ -83,3 +83,13 @@ Design **invariants** (one pawn, host sim, dark until NNN, inverse competence, S
 - Branch from the current design/implementation branch, not random local-only work.
 - Commit durable decisions.
 - Follow s&box `.gitignore` (no `.csproj`, `.sln`, compiled `*_c`, `bin/`, `obj/`).
+
+## Snappy loop
+
+Fastest path from "I changed something" to seeing it:
+
+1. **Feature / number** — edit C# (or a `[Property]` on a live component), save. The editor hot-reloads. Play if you are not already in play.
+2. **Level** — add `skyneet-survivors/Assets/levels/{id}.json` (copy `cavern_0.json`) or use **SkyNeet / New Level**. `WorldFactory` stamps that def into `cavern.scene`. JSON wins; `LevelCatalog` builtins are the fallback if the file does not mount.
+3. **Jump the chain** — with Dev Loop on (default), keys 1–9: scrap, NNN, Sancient, clock→30s, extract, reload layout, next site, die, reset. Turn off with **SkyNeet / Dev Loop Off** before Task 8.
+
+Do not add a second physics scene per hole. Do not wait 15 minutes to test occupancy — `dev_60s` plus the DEV keys exist for that.
