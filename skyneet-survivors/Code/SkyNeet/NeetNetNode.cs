@@ -49,6 +49,19 @@ public sealed class NeetNetNode : Component
 		if ( !ShouldPromptPlant( player.WorldPosition ) )
 			return;
 
+		Plant();
+	}
+
+	/// <summary>Host plant, no range check. Player Use goes through ShouldPromptPlant first; DEV slot 2 calls this directly.</summary>
+	public void Plant()
+	{
+		if ( IsProxy || Planted )
+			return;
+
+		var director = Director;
+		if ( director is null || director.OperationEnded )
+			return;
+
 		Planted = true;
 		ApplyTint();
 		director.PlantNode();

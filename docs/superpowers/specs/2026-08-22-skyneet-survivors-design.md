@@ -1,7 +1,7 @@
 # SkyNeet Survivors — Game Design
 
 **Date:** 2026-08-22  
-**Amended:** 2026-08-22 from [`FEEDBACK.md`](../../../FEEDBACK.md) on `feat/skyneet-survivors-design`  
+**Amended:** 2026-08-24 — operation layouts are JSON `LevelDef` files; C# hot reload + DEV keys are the iterate loop. Original 2026-08-22 amend from [`FEEDBACK.md`](../../../FEEDBACK.md) on `feat/skyneet-survivors-design`.  
 **Status:** Spec amended after review. First implementation target is the **vertical slice** (§11), not the full v1 list.  
 **Engine:** s&box (Source 2 + .NET 10, Steam editor)  
 **Repo:** https://github.com/alexdepasquale2-jpg/GrokPortal  
@@ -130,12 +130,15 @@ Current working assumptions (not design law):
 | Solo now, co-op later | `GameNetworkType: Multiplayer`, `MinPlayers: 1`. Neetmon `NetworkMode.Object`. Host writes sim |
 | Tick | 50 Hz. Move / build / AI in `OnFixedUpdate`. Camera / HUD in `OnUpdate` |
 | Spawnables | `.prefab` + instantiate/clone |
-| Data defs | `GameResource` |
+| Operation layouts | JSON `LevelDef` in `Assets/levels/{siteId}.json`. C# builtin fallback in `LevelCatalog`. One scene (`cavern.scene`); data picks the hole |
+| Data defs | `GameResource` later (units / feats / blueprints). Not used for layouts — unconfirmed attribute, and JSON is already the snappy path |
 | Campaign memory | Host `FileSystem.Data`. Operation backpack is **not** in that file |
 | AI | Nav mesh agent + competence component. Sancient is a **director**, not a second physics world |
 | HUD | Razor screen/world panels |
 | Input | Named actions only |
 | Code | C# components. Hot reload. No Unity / Godot APIs |
+
+**Snappy loop (assumption, not a design pillar):** edit C# → editor hot-reloads → see it. Edit or add `Assets/levels/{id}.json` → Play or DEV 6/7/9 → the hole restamps. `SkyNeet / New Level` writes the next `cavern_N.json` and selects it. DEV slot keys 1–9 jump the causal chain; `SkyNeet / Dev Loop Off` for Task 8. Default drop remains `cavern_0` (15-minute slice). `dev_60s` is an iterate hole, not a spec duration.
 
 **Do not** load the entire archipelago as one physics scene. An operation is one scene. The campaign board is data + a light UI.
 

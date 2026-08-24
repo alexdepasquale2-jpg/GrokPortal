@@ -45,9 +45,17 @@ public sealed class OperationHud : PanelComponent
 		_body.Text =
 			$"SKYNEET  {clock}  |  SCRAP {d.Scrap}\n" +
 			$"NNN {node}  LOUD {d.Loudness:0.0}  {sancient}\n" +
-			$"OWNER {d.SiteOwner}  {ended}\n" +
+			$"OWNER {d.SiteOwner}  SITE {OperationDirector.SiteId}  {ended}\n" +
 			"E: plant NNN / raise fort   extract: hold the dark pad" +
-			dread;
+			dread +
+			DevLine();
+	}
+
+	static string DevLine()
+	{
+		if ( !CampaignSession.DevLoop )
+			return "";
+		return "\nDEV 1 scrap  2 NNN  3 sancient  4 clock  5 extract  6 reload  7 next  8 die  9 reset";
 	}
 
 	string DreadLine( OperationDirector director )
