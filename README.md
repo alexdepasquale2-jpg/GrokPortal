@@ -10,7 +10,7 @@ Browser stealth-heist. Steal the last light, hide from the glow-hunters, walk it
 cd wick && npm install && npm run dev
 ```
 
-`http://127.0.0.1:5173` — Space to start. JSON rooms in `wick/public/levels/`. How to iterate: [`wick/README.md`](wick/README.md).
+`http://127.0.0.1:5173` — Space or tap to start. On a phone: same WiFi, open the Network URL Vite prints, or append `?touch=1`. Stick + LANTERN / DASH / FLARE.
 
 This is the loop a cloud agent can actually run with you. No s&box editor, no 15-minute wait.
 

@@ -9,20 +9,41 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.closePath();
 }
 
-export function render(ctx, game) {
+export function eventToWorld(e, canvas, game) {
+  const r = canvas.getBoundingClientRect();
+  const cw = r.width;
+  const ch = r.height;
+  const scale = Math.min(cw / game.def.w, ch / game.def.h);
+  const ox = (cw - game.def.w * scale) / 2;
+  const oy = (ch - game.def.h * scale) / 2;
+  return {
+    x: Math.round((e.clientX - r.left - ox) / scale),
+    y: Math.round((e.clientY - r.top - oy) / scale),
+  };
+}
+
+export function render(ctx, game, canvas) {
   const { def, player } = game;
-  const w = ctx.canvas.width;
-  const h = ctx.canvas.height;
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  const cw = Math.max(1, canvas.clientWidth);
+  const ch = Math.max(1, canvas.clientHeight);
+  const bw = Math.max(1, Math.floor(cw * dpr));
+  const bh = Math.max(1, Math.floor(ch * dpr));
+  if (canvas.width !== bw || canvas.height !== bh) {
+    canvas.width = bw;
+    canvas.height = bh;
+  }
 
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.fillStyle = "#05060a";
-  ctx.fillRect(0, 0, w, h);
+  ctx.fillRect(0, 0, cw, ch);
 
-  const sx = w / def.w;
-  const sy = h / def.h;
+  const scale = Math.min(cw / def.w, ch / def.h);
+  const ox = (cw - def.w * scale) / 2;
+  const oy = (ch - def.h * scale) / 2;
   const shakeX = game.shake ? (Math.random() - 0.5) * game.shake : 0;
   const shakeY = game.shake ? (Math.random() - 0.5) * game.shake : 0;
-  ctx.setTransform(sx, 0, 0, sy, shakeX, shakeY);
+  ctx.setTransform(dpr * scale, 0, 0, dpr * scale, dpr * (ox + shakeX), dpr * (oy + shakeY));
 
   drawFloor(ctx, def);
   for (const wall of def.walls) drawWall(ctx, wall);
@@ -36,8 +57,8 @@ export function render(ctx, game) {
 
   drawDarkness(ctx, def, player, game);
 
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-  drawHud(ctx, game);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  drawHud(ctx, game, cw, ch);
 }
 
 function drawFloor(ctx, def) {
@@ -200,11 +221,8 @@ function drawDarkness(ctx, def, player, game) {
   ctx.restore();
 }
 
-function drawHud(ctx, game) {
-  const w = ctx.canvas.width;
-  const h = ctx.canvas.height;
+function drawHud(ctx, game, w, h) {
   ctx.save();
-  ctx.font = "16px Segoe UI";
   ctx.fillStyle = "#e8dcc4";
 
   if (game.status === "title") {
@@ -212,14 +230,19 @@ function drawHud(ctx, game) {
     ctx.fillRect(0, 0, w, h);
     ctx.textAlign = "center";
     ctx.fillStyle = "#ffb347";
-    ctx.font = "700 72px Segoe UI";
-    ctx.fillText("WICK", w / 2, h / 2 - 40);
+    const titleSize = Math.max(42, Math.min(72, w * 0.16));
+    ctx.font = `700 ${titleSize}px Segoe UI`;
+    ctx.fillText("WICK", w / 2, h / 2 - 36);
     ctx.fillStyle = "#e8dcc4";
-    ctx.font = "18px Segoe UI";
+    ctx.font = `${Math.max(14, w * 0.032)}px Segoe UI`;
     ctx.fillText("Steal the last light. Hide in the dark. Walk it out.", w / 2, h / 2 + 8);
-    ctx.font = "14px Segoe UI";
+    ctx.font = `${Math.max(13, w * 0.028)}px Segoe UI`;
     ctx.fillStyle = "#9aa3b8";
-    ctx.fillText("WASD move   SHIFT dash   E lantern   F flare   SPACE start", w / 2, h / 2 + 48);
+    ctx.fillText(
+      game.touch ? "TAP TO START     stick move     lantern · dash · flare" : "WASD move   SHIFT dash   E lantern   F flare   SPACE start",
+      w / 2,
+      h / 2 + 48
+    );
     ctx.restore();
     return;
   }
@@ -228,40 +251,41 @@ function drawHud(ctx, game) {
     ctx.fillStyle = "rgba(4,5,10,0.62)";
     ctx.fillRect(0, 0, w, h);
     ctx.textAlign = "center";
-    ctx.font = "700 42px Segoe UI";
+    ctx.font = `700 ${Math.max(28, Math.min(42, w * 0.08))}px Segoe UI`;
     ctx.fillStyle = game.status === "dead" ? "#ff6b6b" : "#5dffb0";
     const title =
       game.status === "dead" ? "THEY SAW THE FLAME" : "THE LIGHT LEFT WITH YOU";
     ctx.fillText(title, w / 2, h / 2 - 10);
     ctx.font = "16px Segoe UI";
     ctx.fillStyle = "#e8dcc4";
-    ctx.fillText("SPACE / R  —  again", w / 2, h / 2 + 32);
+    ctx.fillText(game.touch ? "TAP TO GO AGAIN" : "SPACE / R  —  again", w / 2, h / 2 + 32);
     ctx.restore();
     return;
   }
 
   const p = game.player;
-  const oilW = 180;
+  const oilW = Math.min(180, w * 0.4);
   const oilH = 10;
+  const pad = 16;
   ctx.textAlign = "left";
-  ctx.font = "12px Segoe UI";
+  ctx.font = "13px Segoe UI";
   ctx.fillStyle = "#9aa3b8";
-  ctx.fillText(game.def.name.toUpperCase(), 24, 28);
+  ctx.fillText(game.def.name.toUpperCase(), pad, pad + 12);
   ctx.fillStyle = "#3a2a1a";
-  ctx.fillRect(24, 38, oilW, oilH);
+  ctx.fillRect(pad, pad + 22, oilW, oilH);
   ctx.fillStyle = "#ff8a3d";
-  ctx.fillRect(24, 38, oilW * (p.oil / Math.max(p.maxOil, 0.01)), oilH);
+  ctx.fillRect(pad, pad + 22, oilW * (p.oil / Math.max(p.maxOil, 0.01)), oilH);
   ctx.fillStyle = "#e8dcc4";
-  ctx.fillText(p.lantern ? "LANTERN ON" : "HIDDEN", 24, 64);
-  ctx.fillText(p.hasRelic ? "RELIC  take it to the door" : "find the relic", 24, 82);
+  ctx.fillText(p.oil <= 0 ? "NO OIL" : p.lantern ? "LANTERN ON" : "HIDDEN", pad, pad + 50);
+  ctx.fillText(p.hasRelic ? "RELIC  take it to the door" : "find the relic", pad, pad + 68);
 
-  if (game.dev.on) {
+  if (game.dev.on && !game.touch) {
     ctx.font = "12px ui-monospace, Consolas, monospace";
     ctx.fillStyle = "#7ee7ff";
     ctx.fillText(
       "DEV  1 oil  2 relic  3 extract  4 reload  5 next  6 inf oil  7 freeze  8 die  9 reset   click=coords",
-      24,
-      h - 18
+      pad,
+      h - 16
     );
   }
   ctx.restore();

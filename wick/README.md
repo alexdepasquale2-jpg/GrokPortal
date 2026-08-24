@@ -10,7 +10,21 @@ npm install
 npm run dev
 ```
 
-Open `http://127.0.0.1:5173`. Space to start.
+Open `http://127.0.0.1:5173` on this machine, or the **Network** URL Vite prints on your phone (same WiFi).
+
+## Phone
+
+The game is built for a phone. Rotate or stay portrait — the well letterboxes, HUD stays readable.
+
+- **Tap** to start / go again
+- **Left stick** move
+- **LANTERN** hide or see
+- **DASH** burst (costs oil)
+- **FLARE** stun (costs oil)
+
+Add to Home Screen for a fullscreen app. Same WiFi as the computer running `npm run dev`, then open the Network address Vite prints (not 127.0.0.1).
+
+Desktop: WASD, Shift, E, F, Space. Append `?touch=1` to force the on-screen stick.
 
 ## Loop (this is the whole point)
 

@@ -22,6 +22,7 @@ export class Game {
     this.shake = 0;
     this.run = { stolen: 0, deaths: 0 };
     this.status = "title";
+    this.touch = false;
     this.levelId = catalog.ids[0];
     this.time = 0;
     this.bootLevel(this.levelId);
@@ -105,8 +106,8 @@ export class Game {
 
     this.time += dt;
     const p = this.player;
-    if (input.consume("KeyE") || input.consume("Space")) {
-      if (p.oil > 0.15) p.lantern = !p.lantern;
+    if ((input.consume("KeyE") || input.consume("Space") || input.consume("TouchLantern")) && p.oil > 0) {
+      p.lantern = !p.lantern;
     }
     if (p.oil <= 0) p.lantern = false;
 

@@ -1,3 +1,5 @@
+import { eventToWorld } from "./render.js";
+
 export class Dev {
   constructor(game, catalog, canvas) {
     this.game = game;
@@ -6,13 +8,11 @@ export class Dev {
     this.pollAt = 0;
     this.lastJson = "";
     canvas.addEventListener("click", (e) => {
-      if (!game.dev.on) return;
-      const r = canvas.getBoundingClientRect();
-      const x = Math.round(((e.clientX - r.left) / r.width) * game.def.w);
-      const y = Math.round(((e.clientY - r.top) / r.height) * game.def.h);
-      game.dev.mouse = { x, y };
-      this.note = `click ${x},${y}`;
-      console.log(`[WICK] click ${x},${y}`);
+      if (!game.dev.on || game.touch) return;
+      const p = eventToWorld(e, canvas, game);
+      game.dev.mouse = p;
+      this.note = `click ${p.x},${p.y}`;
+      console.log(`[WICK] click ${p.x},${p.y}`);
     });
   }
 
