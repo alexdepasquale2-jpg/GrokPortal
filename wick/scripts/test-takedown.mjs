@@ -109,7 +109,7 @@ const autoIn = new TapInput();
 autoIn.tap("KeyC");
 step(auto, 0.016, autoIn);
 step(auto, CHOKE_AUTO + 0.05);
-expect("choke finishes on its own if you hold", auto.guards[0].down && !auto.melee);
+expect("choke stays a grab until you tap C", auto.melee?.phase === "choke" && !auto.guards[0].down);
 
 const face = play();
 face.player.x = 175;

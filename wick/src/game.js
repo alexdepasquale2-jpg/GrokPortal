@@ -2,7 +2,6 @@ import { circleHits, circleHitsAabb, dist, moveAndSlide } from "./physics.js";
 import {
   BRAWL_HITS,
   BRAWL_WINDOW,
-  CHOKE_AUTO,
   GRAB_SPEED,
   NOISE_RADIUS,
   bestBrawl,
@@ -319,7 +318,6 @@ export class Game {
       }
       pinBehind(p, g);
       this.prompt = { kind: "finish", guard: g };
-      if (m.t >= CHOKE_AUTO) this.finishTakedown(m, true);
       return;
     }
     if (m.phase === "brawl") {

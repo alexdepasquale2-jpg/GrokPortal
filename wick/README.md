@@ -45,7 +45,7 @@ Click the canvas in DEV to print world coordinates. Paste those into a JSON file
 - **SHIFT** dash (costs oil)
 - **E** / **Space** lantern on/off
 - **F** flare (stun, costs oil)
-- **C** / **Ctrl** takedown — behind an unaware hunter: grab, drag with the stick, tap again to choke them out. Face to face after they spot you: mash C to win a noisy fight, or they take you.
+- **C** / **Ctrl** takedown — behind an unaware hunter: grab, drag with the stick, tap C again to choke them out. Face to face after they spot you: mash C to win a noisy fight, or they take you.
 - **R** restart after death
 
 Lantern on: you see, they see you. Lantern off: you are a silhouette. No oil → lantern dies. Grab the gold relic, the door unlocks, leave. Three rooms is a run.
