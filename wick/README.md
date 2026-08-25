@@ -21,6 +21,7 @@ The game is built for a phone. Rotate or stay portrait — the well letterboxes,
 - **LANTERN** hide or see
 - **DASH** burst (costs oil)
 - **FLARE** stun (costs oil)
+- **TAKE DOWN** appears when you are in range: behind an unaware hunter to grab, CHOKE to drop them, STRIKE if they already saw you
 
 Add to Home Screen for a fullscreen app. Same WiFi as the computer running `npm run dev`, then open the Network address Vite prints (not 127.0.0.1).
 
@@ -44,6 +45,7 @@ Click the canvas in DEV to print world coordinates. Paste those into a JSON file
 - **SHIFT** dash (costs oil)
 - **E** / **Space** lantern on/off
 - **F** flare (stun, costs oil)
+- **C** / **Ctrl** takedown — behind an unaware hunter: grab, drag with the stick, tap again to choke them out. Face to face after they spot you: mash C to win a noisy fight, or they take you.
 - **R** restart after death
 
 Lantern on: you see, they see you. Lantern off: you are a silhouette. No oil → lantern dies. Grab the gold relic, the door unlocks, leave. Three rooms is a run.
@@ -54,6 +56,7 @@ Lantern on: you see, they see you. Lantern off: you are a silhouette. No oil →
 wick/
   public/levels/     JSON rooms + index.json (the run order)
   src/game.js        rules
+  src/melee.js       rear choke / hand-to-hand
   src/render.js      look
   src/dev.js         keys 1-9 + JSON poll
   scripts/new-level.mjs

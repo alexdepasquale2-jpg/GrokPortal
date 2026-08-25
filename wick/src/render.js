@@ -53,6 +53,8 @@ export function render(ctx, game, canvas) {
   }
   if (game.relic && !game.relic.taken) drawRelic(ctx, game.relic, game.time);
   for (const g of game.guards) drawGuard(ctx, g, game.time);
+  if (game.prompt?.guard && !game.prompt.guard.down) drawPromptRing(ctx, game.prompt);
+  if (game.melee?.phase === "choke") drawGrabLink(ctx, player, game.melee.guard);
   drawPlayer(ctx, player, game.time, game.flare);
 
   drawDarkness(ctx, def, player, game);
@@ -153,9 +155,23 @@ function drawRelic(ctx, relic, t) {
 function drawGuard(ctx, g, t) {
   ctx.save();
   ctx.translate(g.x, g.y);
-  const ang = Math.atan2(g.vy, g.vx);
+  const ang = g.facing ?? Math.atan2(g.vy, g.vx);
   ctx.rotate(ang);
-  ctx.fillStyle = g.stun > 0 ? "#8aa" : g.alert > 0 ? "#6ad0e8" : "#3d6d7a";
+  if (g.down) {
+    ctx.globalAlpha = 0.7;
+    ctx.rotate(0.9);
+    ctx.fillStyle = "#243038";
+    ctx.beginPath();
+    ctx.moveTo(12, 0);
+    ctx.lineTo(-9, 8);
+    ctx.lineTo(-5, 0);
+    ctx.lineTo(-9, -8);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+    return;
+  }
+  ctx.fillStyle = g.held ? "#c4a574" : g.stun > 0 ? "#8aa" : g.alert > 0 ? "#6ad0e8" : "#3d6d7a";
   ctx.beginPath();
   ctx.moveTo(14, 0);
   ctx.lineTo(-10, 9);
@@ -163,17 +179,40 @@ function drawGuard(ctx, g, t) {
   ctx.lineTo(-10, -9);
   ctx.closePath();
   ctx.fill();
-  ctx.fillStyle = g.alert > 0 ? "#ff5a5a" : "#7ee7ff";
+  ctx.fillStyle = g.held ? "#ffb347" : g.alert > 0 ? "#ff5a5a" : "#7ee7ff";
   ctx.beginPath();
   ctx.arc(4, 0, 3, 0, Math.PI * 2);
   ctx.fill();
-  if (g.alert > 0) {
+  if (g.alert > 0 && !g.held) {
     ctx.strokeStyle = "rgba(255,80,80,0.35)";
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.arc(0, 0, 22 + Math.sin(t * 10) * 3, 0, Math.PI * 2);
     ctx.stroke();
   }
+  ctx.restore();
+}
+
+function drawPromptRing(ctx, prompt) {
+  const g = prompt.guard;
+  ctx.save();
+  ctx.translate(g.x, g.y);
+  ctx.strokeStyle = prompt.kind === "brawl" ? "rgba(255,90,90,0.8)" : "rgba(255,179,71,0.85)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(0, 0, 22 + (prompt.kind === "finish" ? 4 : 0), 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawGrabLink(ctx, player, guard) {
+  ctx.save();
+  ctx.strokeStyle = "rgba(255,179,71,0.55)";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(player.x, player.y);
+  ctx.lineTo(guard.x, guard.y);
+  ctx.stroke();
   ctx.restore();
 }
 
@@ -239,7 +278,7 @@ function drawHud(ctx, game, w, h) {
     ctx.font = `${Math.max(13, w * 0.028)}px Segoe UI`;
     ctx.fillStyle = "#9aa3b8";
     ctx.fillText(
-      game.touch ? "TAP TO START     stick move     lantern · dash · flare" : "WASD move   SHIFT dash   E lantern   F flare   SPACE start",
+      game.touch ? "TAP TO START     stick · lantern · dash · flare · TAKE DOWN" : "WASD move   SHIFT dash   E lantern   F flare   C takedown   SPACE start",
       w / 2,
       h / 2 + 48
     );
@@ -278,6 +317,27 @@ function drawHud(ctx, game, w, h) {
   ctx.fillStyle = "#e8dcc4";
   ctx.fillText(p.oil <= 0 ? "NO OIL" : p.lantern ? "LANTERN ON" : "HIDDEN", pad, pad + 50);
   ctx.fillText(p.hasRelic ? "RELIC  take it to the door" : "find the relic", pad, pad + 68);
+  if (game.prompt) {
+    const label =
+      game.prompt.kind === "stealth"
+        ? game.touch
+          ? "BEHIND THEM  —  TAKE DOWN"
+          : "BEHIND THEM  —  C  choke"
+        : game.prompt.kind === "finish"
+          ? game.touch
+            ? "CHOKE  —  TAP TO DROP"
+            : "C  knock out    stick to drag"
+          : game.touch
+            ? "FIGHT  —  MASH TAKE DOWN"
+            : "C  mash  —  hand to hand";
+    ctx.fillStyle = game.prompt.kind === "brawl" ? "#ff6b6b" : "#ffb347";
+    ctx.font = "700 14px Segoe UI";
+    ctx.fillText(label, pad, pad + 90);
+  }
+  if (game.flash > 0) {
+    ctx.fillStyle = `rgba(255,220,180,${Math.min(0.35, game.flash * 2)})`;
+    ctx.fillRect(0, 0, w, h);
+  }
 
   if (game.dev.on && !game.touch) {
     ctx.font = "12px ui-monospace, Consolas, monospace";

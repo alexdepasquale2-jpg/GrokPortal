@@ -92,9 +92,18 @@ export function mountTouch(input, game, canvas) {
   bind("btn-lantern", "TouchLantern");
   bind("btn-dash", "ShiftLeft");
   bind("btn-flare", "KeyF");
+  bind("btn-takedown", "TouchTakedown");
 
+  const take = document.getElementById("btn-takedown");
   const sync = () => {
     root.dataset.mode = game.status;
+    const prompt = game.prompt;
+    root.dataset.takedown = prompt ? "1" : "0";
+    root.dataset.kind = prompt?.kind || "";
+    if (prompt) {
+      take.textContent =
+        prompt.kind === "finish" ? "CHOKE" : prompt.kind === "brawl" ? "STRIKE" : "TAKE DOWN";
+    }
     requestAnimationFrame(sync);
   };
   sync();

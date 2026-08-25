@@ -94,6 +94,35 @@ body {
   color: #ffb347;
 }
 
+#btn-takedown {
+  display: none !important;
+  width: 96px;
+  height: 96px;
+  border-color: #ffb347;
+  color: #ffb347;
+  box-shadow: 0 0 18px rgba(255, 179, 71, 0.35);
+  animation: pulse 0.9s ease-in-out infinite;
+}
+
+#touch[data-takedown="1"] #btn-takedown {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+#touch[data-kind="brawl"] #btn-takedown {
+  border-color: #ff6b6b;
+  color: #ff6b6b;
+  box-shadow: 0 0 18px rgba(255, 90, 90, 0.4);
+}
+
+@keyframes pulse {
+  50% {
+    transform: scale(1.06);
+  }
+}
+
 #touch:not([hidden])[data-mode="play"] .stick,
 #touch:not([hidden])[data-mode="play"] .btns {
   display: flex;

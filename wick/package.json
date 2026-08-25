@@ -6,7 +6,7 @@
     "dev": "vite --host --port 5173",
     "build": "vite build",
     "preview": "vite preview --host --port 5173",
-    "test": "node scripts/validate-levels.mjs",
+    "test": "node scripts/validate-levels.mjs && node scripts/test-melee.mjs && node scripts/test-takedown.mjs",
     "new-level": "node scripts/new-level.mjs"
   },
   "devDependencies": {
