@@ -52,12 +52,19 @@ export function render(ctx, game, canvas) {
     if (!can.taken) drawOil(ctx, can, game.time);
   }
   if (game.relic && !game.relic.taken) drawRelic(ctx, game.relic, game.time);
-  for (const g of game.guards) drawGuard(ctx, g, game.time);
-  if (game.prompt?.guard && !game.prompt.guard.down) drawPromptRing(ctx, game.prompt);
-  if (game.melee?.phase === "choke") drawGrabLink(ctx, player, game.melee.guard);
+  for (const g of game.guards) {
+    if (g.down || g.held) continue;
+    drawGuard(ctx, g, game.time);
+  }
   drawPlayer(ctx, player, game.time, game.flare);
 
   drawDarkness(ctx, def, player, game);
+
+  for (const g of game.guards) {
+    if (g.down || g.held) drawGuard(ctx, g, game.time);
+  }
+  if (game.prompt?.guard && !game.prompt.guard.down) drawPromptRing(ctx, game.prompt);
+  if (game.melee?.phase === "choke") drawGrabLink(ctx, player, game.melee.guard);
 
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   drawHud(ctx, game, cw, ch);
