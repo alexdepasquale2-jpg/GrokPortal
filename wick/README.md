@@ -21,7 +21,7 @@ The game is built for a phone. Rotate or stay portrait — the well letterboxes,
 - **LANTERN** hide or see
 - **DASH** burst (costs oil)
 - **FLARE** stun (costs oil)
-- **TAKE DOWN** appears when you are in range: behind an unaware hunter to grab, CHOKE to drop them, STRIKE if they already saw you
+- **TAKE DOWN** appears when you are in range. It becomes **CHOKE** while you hold someone, **COMBO** if they already saw you, and **DRAG** / **DROP** over a body
 
 Add to Home Screen for a fullscreen app.
 
@@ -53,7 +53,10 @@ Click the canvas in DEV to print world coordinates. Paste those into a JSON file
 - **SHIFT** dash (costs oil)
 - **E** / **Space** lantern on/off
 - **F** flare (stun, costs oil)
-- **C** / **Ctrl** takedown — behind an unaware hunter: grab, drag with the stick, tap C again to choke them out. Face to face after they spot you: mash C to win a noisy fight, or they take you.
+- **C** / **Ctrl** melee, one press per beat:
+  - Behind an unaware hunter: grab them, walk them somewhere with the stick, press C again to choke them out. Silent.
+  - Face to face after they spot you: one press throws a whole punch combo and ends with them on the floor. Loud — it wakes everyone nearby.
+  - Standing over a body: press C to haul it, stick to drag, C to let go. Move it out of a patrol line.
 - **R** restart after death
 
 Lantern on: you see, they see you. Lantern off: you are a silhouette. No oil → lantern dies. Grab the gold relic, the door unlocks, leave. Three rooms is a run.
