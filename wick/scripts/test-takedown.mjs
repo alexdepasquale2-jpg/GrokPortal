@@ -1,6 +1,6 @@
 import { Catalog } from "../src/catalog.js";
 import { Game } from "../src/game.js";
-import { BRAWL_HITS, BRAWL_WINDOW, CHOKE_AUTO, REACH } from "../src/melee.js";
+import { COMBO_END, COMBO_STEP, REACH } from "../src/melee.js";
 
 function expect(name, ok) {
   if (!ok) {
@@ -108,7 +108,7 @@ auto.guards[0].facing = 0;
 const autoIn = new TapInput();
 autoIn.tap("KeyC");
 step(auto, 0.016, autoIn);
-step(auto, CHOKE_AUTO + 0.05);
+step(auto, 2.5);
 expect("choke stays a grab until you tap C", auto.melee?.phase === "choke" && !auto.guards[0].down);
 
 const face = play();
@@ -119,28 +119,41 @@ face.guards[0].y = 200;
 face.guards[0].facing = 0;
 face.guards[0].alert = 1;
 step(face, 0.016);
-expect("alert + close is a brawl prompt", face.prompt?.kind === "brawl");
+expect("alert + close offers the combo", face.prompt?.kind === "brawl");
 const fight = new TapInput();
 fight.tap("KeyC");
 step(face, 0.016, fight);
-expect("C into an alert hunter starts a fight", face.melee?.phase === "brawl");
-for (let i = 0; i < BRAWL_HITS; i++) {
-  const mash = new TapInput();
-  mash.tap("KeyC");
-  step(face, 0.05, mash);
-}
-expect("mashing C wins a noisy fight", face.guards[0].down && face.status === "play");
+expect("one press starts the combo", face.melee?.phase === "combo");
+expect("the first punch lands on that press", face.melee?.hits === 1);
+step(face, COMBO_STEP * 2);
+expect("the combo keeps swinging with no extra input", face.melee?.hits > 1);
+step(face, COMBO_END);
+expect("the combo ends in a KO on its own", face.guards[0].down && face.status === "play");
+expect("winning the combo does not kill you", face.run.deaths === 0);
 expect("a loud KO wakes nearby hunters", face.guards[1].alert > 0);
 
-const lose = play();
-lose.player.x = 175;
-lose.player.y = 200;
-lose.guards[0].alert = 1;
-const startFight = new TapInput();
-startFight.tap("KeyC");
-step(lose, 0.016, startFight);
-step(lose, BRAWL_WINDOW + 0.05);
-expect("losing the mash is death once", lose.status === "dead" && lose.run.deaths === 1);
+const haul = play();
+haul.guards[0].down = true;
+haul.guards[0].x = 200;
+haul.guards[0].y = 200;
+haul.player.x = 220;
+haul.player.y = 200;
+step(haul, 0.016);
+expect("standing over a body offers a drag", haul.prompt?.kind === "body");
+const grabBody = new TapInput();
+grabBody.tap("KeyC");
+step(haul, 0.016, grabBody);
+expect("C on a body starts hauling", haul.melee?.phase === "haul");
+const hauling = new TapInput();
+hauling.stick.x = 1;
+for (let i = 0; i < 30; i++) step(haul, 0.033, hauling);
+expect("the body follows you", haul.guards[0].x > 200);
+expect("the body stays in tow", haul.melee?.phase === "haul");
+const drop = new TapInput();
+drop.tap("KeyC");
+step(haul, 0.016, drop);
+expect("C again lets go of the body", !haul.melee && haul.guards[0].down);
+expect("hauling a body is never a fight", haul.status === "play");
 
 const vis = play();
 vis.player.lantern = false;

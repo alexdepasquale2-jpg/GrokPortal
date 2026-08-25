@@ -3,10 +3,15 @@ import { dist } from "./physics.js";
 export const REACH = 40;
 export const BEHIND_DOT = -0.32;
 export const GRAB_SPEED = 82;
-export const CHOKE_AUTO = 2.4;
-export const BRAWL_HITS = 3;
-export const BRAWL_WINDOW = 2.2;
 export const NOISE_RADIUS = 220;
+
+export const COMBO_HITS = 4;
+export const COMBO_STEP = 0.13;
+export const COMBO_END = COMBO_STEP * COMBO_HITS + 0.16;
+
+export const BODY_REACH = 34;
+export const HAUL_SPEED = 104;
+export const HAUL_SLACK = 20;
 
 export function facingOf(g) {
   if (Math.hypot(g.vx || 0, g.vy || 0) > 8) return Math.atan2(g.vy, g.vx);
@@ -57,6 +62,25 @@ export function bestBrawl(player, guards) {
   let bestD = REACH + 1;
   for (const g of guards) {
     if (!canBrawl(player, g)) continue;
+    const d = dist(player, g);
+    if (d < bestD) {
+      best = g;
+      bestD = d;
+    }
+  }
+  return best;
+}
+
+export function canHaul(player, guard) {
+  if (!guard || !guard.down) return false;
+  return dist(player, guard) <= BODY_REACH;
+}
+
+export function bestBody(player, guards) {
+  let best = null;
+  let bestD = BODY_REACH + 1;
+  for (const g of guards) {
+    if (!canHaul(player, g)) continue;
     const d = dist(player, g);
     if (d < bestD) {
       best = g;
