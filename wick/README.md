@@ -23,7 +23,15 @@ The game is built for a phone. Rotate or stay portrait — the well letterboxes,
 - **FLARE** stun (costs oil)
 - **TAKE DOWN** appears when you are in range: behind an unaware hunter to grab, CHOKE to drop them, STRIKE if they already saw you
 
-Add to Home Screen for a fullscreen app. Same WiFi as the computer running `npm run dev`, then open the Network address Vite prints (not 127.0.0.1).
+Add to Home Screen for a fullscreen app.
+
+Three ways to get it on a phone, cheapest first:
+
+1. **Hosted link (no computer needed).** Pushing `wick/**` to the design branch builds and publishes to GitHub Pages via `.github/workflows/wick-pages.yml`. One-time repo setup: **Settings → Pages → Build and deployment → Source: GitHub Actions**. The link then lives at `https://<owner>.github.io/<repo>/`.
+2. **Same WiFi.** `npm run dev`, then open the **Network** address Vite prints (not 127.0.0.1).
+3. **Anywhere, temporarily.** `cloudflared tunnel --url http://127.0.0.1:5173` prints a public `trycloudflare.com` URL. It dies when you stop the process.
+
+DEV keys are off in a hosted build. Add `?dev=1` if you want them.
 
 Desktop: WASD, Shift, E, F, Space. Append `?touch=1` to force the on-screen stick.
 
