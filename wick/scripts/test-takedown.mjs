@@ -1,6 +1,6 @@
 import { Catalog } from "../src/catalog.js";
 import { Game } from "../src/game.js";
-import { BRAWL_HITS, BRAWL_WINDOW, CHOKE_AUTO } from "../src/melee.js";
+import { BRAWL_HITS, BRAWL_WINDOW, CHOKE_AUTO, REACH } from "../src/melee.js";
 
 function expect(name, ok) {
   if (!ok) {
@@ -140,6 +140,10 @@ startFight.tap("KeyC");
 step(lose, 0.016, startFight);
 step(lose, BRAWL_WINDOW + 0.05);
 expect("losing the mash is death once", lose.status === "dead" && lose.run.deaths === 1);
+
+const vis = play();
+vis.player.lantern = false;
+expect("hidden vision covers melee reach", vis.visionRadius() >= REACH);
 
 if (process.exitCode) {
   console.error("FAIL takedown");

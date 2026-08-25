@@ -96,7 +96,7 @@ export class Game {
   }
 
   visionRadius() {
-    if (!this.player.lantern) return 34;
+    if (!this.player.lantern) return 58;
     return 150 + this.player.oil * 4;
   }
 

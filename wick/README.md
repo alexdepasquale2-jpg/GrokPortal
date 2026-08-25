@@ -34,7 +34,7 @@ Desktop: WASD, Shift, E, F, Space. Append `?touch=1` to force the on-screen stic
 | Change a rule | Edit `src/game.js`, save | Vite hot-reloads. Refresh if the sim is mid-run. |
 | Move a guard / relic | Edit `public/levels/{id}.json`, save | ~1s later the room restamps, or press **4** |
 | New room | `npm run new-level -- my_id` | It is in the run. Play, or press **5** |
-| Skip the stealth | DEV keys **1–9** (cyan line) | oil, relic, extract, reload, next, inf oil, freeze, die, reset |
+| Skip the stealth | DEV keys **0–9** (cyan line). **0** snaps you behind a hunter | oil, relic, extract, reload, next, inf oil, freeze, die, reset |
 | Honest playtest | `http://127.0.0.1:5173/?playtest=1` | DEV keys off |
 
 Click the canvas in DEV to print world coordinates. Paste those into a JSON file.

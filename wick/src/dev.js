@@ -22,6 +22,16 @@ export class Dev {
     }
     if (!this.game.dev.on) return;
 
+    if (input.consume("Digit0") || input.consume("Numpad0")) {
+      const g = this.game.guards.find((x) => !x.down && !x.held);
+      if (g) {
+        const ang = g.facing ?? 0;
+        this.game.player.lantern = false;
+        this.game.player.x = g.x - Math.cos(ang) * 28;
+        this.game.player.y = g.y - Math.sin(ang) * 28;
+        this.note = "behind";
+      }
+    }
     if (input.consume("Digit1") || input.consume("Numpad1")) {
       this.game.giveOil(8);
       this.note = "+oil";

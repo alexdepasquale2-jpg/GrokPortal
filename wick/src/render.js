@@ -339,14 +339,13 @@ function drawHud(ctx, game, w, h) {
     ctx.fillRect(0, 0, w, h);
   }
 
-  if (game.dev.on && !game.touch) {
+  if (game.dev.on) {
     ctx.font = "12px ui-monospace, Consolas, monospace";
     ctx.fillStyle = "#7ee7ff";
-    ctx.fillText(
-      "DEV  1 oil  2 relic  3 extract  4 reload  5 next  6 inf oil  7 freeze  8 die  9 reset   click=coords",
-      pad,
-      h - 16
-    );
+    const hint = game.touch
+      ? "DEV  0 behind  7 freeze"
+      : "DEV  0 behind  1 oil  2 relic  3 extract  4 reload  5 next  6 inf oil  7 freeze  8 die  9 reset   click=coords";
+    ctx.fillText(hint, pad, h - 16);
   }
   ctx.restore();
 }
