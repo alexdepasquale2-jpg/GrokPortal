@@ -158,16 +158,19 @@ function drawGuard(ctx, g, t) {
   const ang = g.facing ?? Math.atan2(g.vy, g.vx);
   ctx.rotate(ang);
   if (g.down) {
-    ctx.globalAlpha = 0.7;
+    ctx.globalAlpha = 1;
     ctx.rotate(0.9);
-    ctx.fillStyle = "#243038";
+    ctx.fillStyle = "#9aa3b8";
+    ctx.strokeStyle = "#e8dcc4";
+    ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.moveTo(12, 0);
-    ctx.lineTo(-9, 8);
-    ctx.lineTo(-5, 0);
-    ctx.lineTo(-9, -8);
+    ctx.moveTo(14, 0);
+    ctx.lineTo(-11, 9);
+    ctx.lineTo(-6, 0);
+    ctx.lineTo(-11, -9);
     ctx.closePath();
     ctx.fill();
+    ctx.stroke();
     ctx.restore();
     return;
   }
@@ -256,6 +259,9 @@ function drawDarkness(ctx, def, player, game) {
   ctx.beginPath();
   ctx.rect(0, 0, def.w, def.h);
   ctx.arc(player.x, player.y, vis, 0, Math.PI * 2, true);
+  for (const g of game.guards) {
+    if (g.down) ctx.arc(g.x, g.y, 28, 0, Math.PI * 2, true);
+  }
   ctx.fill("evenodd");
   ctx.restore();
 }

@@ -98,6 +98,7 @@ const finishIn = new TapInput();
 finishIn.tap("KeyC");
 step(grab, 0.016, finishIn);
 expect("second C drops them silent", grab.guards[0].down && !grab.melee);
+expect("the body stays in the world", grab.guards.length === 2 && grab.guards[0].down);
 expect("silent KO does not wake the far hunter", grab.guards[1].alert === 0);
 
 const auto = play();
