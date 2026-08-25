@@ -1,0 +1,11 @@
+{
+  "name": "WICK",
+  "short_name": "WICK",
+  "description": "Steal the last light. Hide in the dark. Walk it out.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#04050a",
+  "theme_color": "#04050a",
+  "orientation": "any",
+  "icons": [{ "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}
