@@ -1,4 +1,5 @@
 import { eventToWorld } from "./render.js";
+import { facingOf } from "./melee.js";
 
 export class Dev {
   constructor(game, catalog, canvas) {
@@ -25,10 +26,15 @@ export class Dev {
     if (input.consume("Digit0") || input.consume("Numpad0")) {
       const g = this.game.guards.find((x) => !x.down && !x.held);
       if (g) {
-        const ang = g.facing ?? 0;
+        this.game.dev.freezeGuards = true;
+        g.alert = 0;
+        g.stun = 0;
+        g.vx = 0;
+        g.vy = 0;
+        const ang = facingOf(g);
         this.game.player.lantern = false;
-        this.game.player.x = g.x - Math.cos(ang) * 28;
-        this.game.player.y = g.y - Math.sin(ang) * 28;
+        this.game.player.x = g.x - Math.cos(ang) * 32;
+        this.game.player.y = g.y - Math.sin(ang) * 32;
         this.note = "behind";
       }
     }
