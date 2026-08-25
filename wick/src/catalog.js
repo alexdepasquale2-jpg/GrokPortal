@@ -1,5 +1,10 @@
 import { isComplete } from "./schema.js";
 
+export function levelUrl(name) {
+  const base = import.meta.env?.BASE_URL || "./";
+  return new URL(`levels/${name}`, new URL(base, location.href)).href;
+}
+
 export class Catalog {
   constructor(ids, byId) {
     this.ids = ids;
@@ -7,10 +12,10 @@ export class Catalog {
   }
 
   static async load() {
-    const index = await fetch("/levels/index.json").then((r) => r.json());
+    const index = await fetch(levelUrl("index.json")).then((r) => r.json());
     const byId = {};
     for (const id of index.ids) {
-      const level = await fetch(`/levels/${id}.json`).then((r) => r.json());
+      const level = await fetch(levelUrl(`${id}.json`)).then((r) => r.json());
       const err = isComplete(level);
       if (err) console.warn(`[WICK] ${id}: ${err}`);
       byId[id] = level;
@@ -30,7 +35,7 @@ export class Catalog {
 
   async reload(id) {
     await this.refreshIndex();
-    const level = await fetch(`/levels/${id}.json?t=${Date.now()}`).then((r) => r.json());
+    const level = await fetch(`${levelUrl(`${id}.json`)}?t=${Date.now()}`).then((r) => r.json());
     const err = isComplete(level);
     if (err) throw new Error(err);
     this.byId[id] = level;
@@ -39,10 +44,10 @@ export class Catalog {
   }
 
   async refreshIndex() {
-    const index = await fetch(`/levels/index.json?t=${Date.now()}`).then((r) => r.json());
+    const index = await fetch(`${levelUrl("index.json")}?t=${Date.now()}`).then((r) => r.json());
     for (const id of index.ids) {
       if (!this.byId[id]) {
-        const level = await fetch(`/levels/${id}.json?t=${Date.now()}`).then((r) => r.json());
+        const level = await fetch(`${levelUrl(`${id}.json`)}?t=${Date.now()}`).then((r) => r.json());
         this.byId[id] = level;
       }
     }

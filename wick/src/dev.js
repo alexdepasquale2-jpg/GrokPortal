@@ -1,5 +1,6 @@
 import { eventToWorld } from "./render.js";
 import { facingOf } from "./melee.js";
+import { levelUrl } from "./catalog.js";
 
 export class Dev {
   constructor(game, catalog, canvas) {
@@ -99,7 +100,7 @@ export class Dev {
 
   async reloadQuiet() {
     try {
-      const res = await fetch(`/levels/${this.game.levelId}.json?t=${Date.now()}`);
+      const res = await fetch(`${levelUrl(`${this.game.levelId}.json`)}?t=${Date.now()}`);
       const text = await res.text();
       if (!this.lastJson) {
         this.lastJson = text;
