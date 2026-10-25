@@ -1,0 +1,20 @@
+{
+  "Id": "dev_60s",
+  "Title": "Dev 60s",
+  "StormSeconds": 60,
+  "StartingScrap": 0,
+  "FortCost": 20,
+  "SancientLoudness": 8,
+  "SancientWindow": 25,
+  "Node": { "X": 80, "Y": 0, "Z": 32 },
+  "Extract": { "X": -80, "Y": 0, "Z": 32 },
+  "Fort": { "X": 0, "Y": -60, "Z": 16 },
+  "Sancient": { "X": 160, "Y": 160, "Z": 40 },
+  "Scrap": [
+    { "X": 40, "Y": 40, "Z": 16, "Amount": 20 },
+    { "X": -40, "Y": 40, "Z": 16, "Amount": 20 }
+  ],
+  "Goliaths": [
+    { "X": 120, "Y": 80, "Z": 40, "Lethality": 0.85 }
+  ]
+}

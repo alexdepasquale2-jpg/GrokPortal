@@ -1,0 +1,22 @@
+{
+  "Id": "cavern_2",
+  "Title": "Scrap Trail",
+  "StormSeconds": 900,
+  "StartingScrap": 0,
+  "FortCost": 20,
+  "SancientLoudness": 8,
+  "SancientWindow": 25,
+  "Node": { "X": 0, "Y": 240, "Z": 32 },
+  "Extract": { "X": 0, "Y": -240, "Z": 32 },
+  "Fort": { "X": 120, "Y": -80, "Z": 16 },
+  "Sancient": { "X": 0, "Y": 400, "Z": 40 },
+  "Scrap": [
+    { "X": 100, "Y": 0, "Z": 16, "Amount": 10 },
+    { "X": 160, "Y": 40, "Z": 16, "Amount": 10 },
+    { "X": 220, "Y": 80, "Z": 16, "Amount": 10 },
+    { "X": -120, "Y": -40, "Z": 16, "Amount": 30 }
+  ],
+  "Goliaths": [
+    { "X": -280, "Y": 160, "Z": 40, "Lethality": 0.9 }
+  ]
+}

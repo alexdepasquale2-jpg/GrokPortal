@@ -81,11 +81,11 @@ that it stays visible.
 |---|---|---|
 | Site records persist | **SHIPPED** | `SiteRecord`: id, owner, node, stockpile, fort |
 | Multi-site graph | **SHIPPED** | `CampaignGraph.DemoThreeSites()` — three caverns |
-| Site selection | **PARTIAL** | `CampaignSession.SelectedSiteId` exists; nothing sets it but code |
+| Site selection | **PARTIAL** | `CampaignSession.SelectedSiteId`; **SkyNeet / Cycle Drop Site** and DEV 7 set it. No board UI yet (Task 12) |
 | Board UI to pick a site | **NONE** | Task 12 |
 | Owners beyond Neet/Occupied | **NONE** | Robot, SancientOp, Nobot, Neutral, Contested unused |
 | Pipelines | **NONE** | Undefined (VISION §12) |
-| Generation from `biomeId + seed + depth` | **NONE** | One hand-placed cavern |
+| Generation from `biomeId + seed + depth` | **PARTIAL** | JSON `LevelDef` layouts in `Assets/levels/` stamped by `WorldFactory`. Not seeded biomes |
 | Time advances on resolve | **PARTIAL** | Implicit — resolving writes the graph; no clock |
 
 ## Cameras, flavor, meta (vision §8, §9, §10)

@@ -1,0 +1,21 @@
+{
+  "Id": "cavern_1",
+  "Title": "Mirror Hole",
+  "StormSeconds": 900,
+  "StartingScrap": 0,
+  "FortCost": 20,
+  "SancientLoudness": 8,
+  "SancientWindow": 25,
+  "Node": { "X": -180, "Y": 0, "Z": 32 },
+  "Extract": { "X": 220, "Y": 0, "Z": 32 },
+  "Fort": { "X": 0, "Y": 80, "Z": 16 },
+  "Sancient": { "X": -400, "Y": 400, "Z": 40 },
+  "Scrap": [
+    { "X": -80, "Y": 120, "Z": 16, "Amount": 15 },
+    { "X": 80, "Y": 140, "Z": 16, "Amount": 20 },
+    { "X": -40, "Y": -160, "Z": 16, "Amount": 25 }
+  ],
+  "Goliaths": [
+    { "X": -300, "Y": 200, "Z": 40, "Lethality": 0.7 }
+  ]
+}

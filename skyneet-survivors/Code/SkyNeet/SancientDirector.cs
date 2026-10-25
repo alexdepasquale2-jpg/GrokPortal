@@ -63,6 +63,31 @@ public sealed class SancientDirector : Component
 		Log.Info( "[SkyNeet] Sancient on the net. They remember." );
 	}
 
+	/// <summary>DEV: open the window now. Plants NNN if the hole is still dark, because Goliaths sleep until then.</summary>
+	public void ForceOpen()
+	{
+		if ( IsProxy || WindowOpen )
+			return;
+
+		var director = Scene.GetAllComponents<OperationDirector>().FirstOrDefault();
+		if ( director is null || director.OperationEnded )
+			return;
+
+		if ( !director.NodeUp )
+		{
+			foreach ( var node in Scene.GetAllComponents<NeetNetNode>() )
+				node.Plant();
+			if ( !director.NodeUp )
+				director.PlantNode();
+		}
+
+		if ( WindowOpen )
+			return;
+
+		_fired = false;
+		OpenWindow( director );
+	}
+
 	void CloseWindow( OperationDirector director )
 	{
 		WindowOpen = false;

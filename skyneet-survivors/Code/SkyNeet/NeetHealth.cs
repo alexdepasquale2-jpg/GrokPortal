@@ -23,4 +23,11 @@ public sealed class NeetHealth : Component
 			Log.Info( "[SkyNeet] Neetmon is down." );
 		}
 	}
+
+	public void Revive()
+	{
+		if ( IsProxy )
+			return;
+		Health = MaxHealth;
+	}
 }
