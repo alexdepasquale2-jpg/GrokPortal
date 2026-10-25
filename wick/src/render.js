@@ -52,19 +52,12 @@ export function render(ctx, game, canvas) {
     if (!can.taken) drawOil(ctx, can, game.time);
   }
   if (game.relic && !game.relic.taken) drawRelic(ctx, game.relic, game.time);
-  for (const g of game.guards) {
-    if (g.down || g.held) continue;
-    drawGuard(ctx, g, game.time);
-  }
+  for (const g of game.guards) drawGuard(ctx, g, game.time);
+  if (game.prompt?.guard) drawPromptRing(ctx, game.prompt);
+  if (game.melee) drawGrabLink(ctx, player, game.melee.guard, game.melee.phase);
   drawPlayer(ctx, player, game.time, game.flare);
 
   drawDarkness(ctx, def, player, game);
-
-  for (const g of game.guards) {
-    if (g.down || g.held) drawGuard(ctx, g, game.time);
-  }
-  if (game.prompt?.guard && !game.prompt.guard.down) drawPromptRing(ctx, game.prompt);
-  if (game.melee?.phase === "choke") drawGrabLink(ctx, player, game.melee.guard);
 
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   drawHud(ctx, game, cw, ch);
@@ -203,11 +196,13 @@ function drawGuard(ctx, g, t) {
   ctx.restore();
 }
 
+const LOUD = new Set(["brawl", "combo"]);
+
 function drawPromptRing(ctx, prompt) {
   const g = prompt.guard;
   ctx.save();
   ctx.translate(g.x, g.y);
-  ctx.strokeStyle = prompt.kind === "brawl" ? "rgba(255,90,90,0.8)" : "rgba(255,179,71,0.85)";
+  ctx.strokeStyle = LOUD.has(prompt.kind) ? "rgba(255,90,90,0.8)" : "rgba(255,179,71,0.85)";
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.arc(0, 0, 22 + (prompt.kind === "finish" ? 4 : 0), 0, Math.PI * 2);
@@ -215,10 +210,12 @@ function drawPromptRing(ctx, prompt) {
   ctx.restore();
 }
 
-function drawGrabLink(ctx, player, guard) {
+function drawGrabLink(ctx, player, guard, phase) {
+  if (!guard) return;
   ctx.save();
-  ctx.strokeStyle = "rgba(255,179,71,0.55)";
-  ctx.lineWidth = 3;
+  ctx.strokeStyle = phase === "combo" ? "rgba(255,90,90,0.6)" : "rgba(255,179,71,0.55)";
+  ctx.lineWidth = phase === "haul" ? 2 : 3;
+  if (phase === "haul") ctx.setLineDash([5, 4]);
   ctx.beginPath();
   ctx.moveTo(player.x, player.y);
   ctx.lineTo(guard.x, guard.y);
@@ -266,11 +263,23 @@ function drawDarkness(ctx, def, player, game) {
   ctx.beginPath();
   ctx.rect(0, 0, def.w, def.h);
   ctx.arc(player.x, player.y, vis, 0, Math.PI * 2, true);
-  for (const g of game.guards) {
-    if (g.down) ctx.arc(g.x, g.y, 28, 0, Math.PI * 2, true);
-  }
   ctx.fill("evenodd");
   ctx.restore();
+}
+
+const PROMPTS = {
+  stealth: ["BEHIND THEM  —  C  choke", "BEHIND THEM  —  TAKE DOWN"],
+  finish: ["C  knock out    stick to drag", "CHOKE  —  TAP TO DROP"],
+  brawl: ["C  —  one combo, loud", "COMBO  —  TAP, loud"],
+  combo: ["COMBO", "COMBO"],
+  body: ["C  drag the body", "DRAG  —  TAP"],
+  haul: ["hauling    C to let go", "HAULING  —  TAP TO DROP"],
+};
+
+function promptLabel(kind, touch) {
+  const pair = PROMPTS[kind];
+  if (!pair) return "";
+  return touch ? pair[1] : pair[0];
 }
 
 function drawHud(ctx, game, w, h) {
@@ -291,7 +300,9 @@ function drawHud(ctx, game, w, h) {
     ctx.font = `${Math.max(13, w * 0.028)}px Segoe UI`;
     ctx.fillStyle = "#9aa3b8";
     ctx.fillText(
-      game.touch ? "TAP TO START     stick · lantern · dash · flare · TAKE DOWN" : "WASD move   SHIFT dash   E lantern   F flare   C takedown   SPACE start",
+      game.touch
+        ? "TAP TO START     stick · lantern · dash · flare · take down"
+        : "WASD move   SHIFT dash   E lantern   F flare   C choke / combo / drag   SPACE start",
       w / 2,
       h / 2 + 48
     );
@@ -331,19 +342,8 @@ function drawHud(ctx, game, w, h) {
   ctx.fillText(p.oil <= 0 ? "NO OIL" : p.lantern ? "LANTERN ON" : "HIDDEN", pad, pad + 50);
   ctx.fillText(p.hasRelic ? "RELIC  take it to the door" : "find the relic", pad, pad + 68);
   if (game.prompt) {
-    const label =
-      game.prompt.kind === "stealth"
-        ? game.touch
-          ? "BEHIND THEM  —  TAKE DOWN"
-          : "BEHIND THEM  —  C  choke"
-        : game.prompt.kind === "finish"
-          ? game.touch
-            ? "CHOKE  —  TAP TO DROP"
-            : "C  knock out    stick to drag"
-          : game.touch
-            ? "FIGHT  —  MASH TAKE DOWN"
-            : "C  mash  —  hand to hand";
-    ctx.fillStyle = game.prompt.kind === "brawl" ? "#ff6b6b" : "#ffb347";
+    const label = promptLabel(game.prompt.kind, game.touch);
+    ctx.fillStyle = LOUD.has(game.prompt.kind) ? "#ff6b6b" : "#ffb347";
     ctx.font = "700 14px Segoe UI";
     ctx.fillText(label, pad, pad + 90);
   }

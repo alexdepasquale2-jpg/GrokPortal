@@ -111,10 +111,19 @@ body {
   text-align: center;
 }
 
-#touch[data-kind="brawl"] #btn-takedown {
+#touch[data-kind="brawl"] #btn-takedown,
+#touch[data-kind="combo"] #btn-takedown {
   border-color: #ff6b6b;
   color: #ff6b6b;
   box-shadow: 0 0 18px rgba(255, 90, 90, 0.4);
+}
+
+#touch[data-kind="body"] #btn-takedown,
+#touch[data-kind="haul"] #btn-takedown {
+  border-color: #9aa3b8;
+  color: #d7dce8;
+  box-shadow: 0 0 14px rgba(154, 163, 184, 0.3);
+  animation: none;
 }
 
 @keyframes pulse {

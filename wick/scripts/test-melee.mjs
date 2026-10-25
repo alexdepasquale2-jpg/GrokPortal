@@ -1,7 +1,9 @@
 import {
+  bestBody,
   bestBrawl,
   bestStealth,
   canBrawl,
+  canHaul,
   canStealth,
   isBehind,
 } from "../src/melee.js";
@@ -48,6 +50,12 @@ expect("no brawl if everyone is calm", !bestBrawl(behind, guards));
 
 const stunned = { ...north, alert: 1, stun: 1, r: 13 };
 expect("a flashed hunter can still be choked from behind", canStealth(behind, stunned));
+
+const body = { x: 100, y: 100, vx: 0, vy: 0, facing: 0, alert: 0, stun: 0, down: true, r: 13 };
+expect("a body in reach can be hauled", canHaul({ x: 100, y: 120 }, body));
+expect("a body across the room cannot", !canHaul({ x: 100, y: 400 }, body));
+expect("only bodies can be hauled", !canHaul({ x: 100, y: 120 }, { ...body, down: false }));
+expect("the nearest body is picked", bestBody({ x: 100, y: 120 }, [body]) === body);
 
 if (process.exitCode) {
   console.error("FAIL melee");

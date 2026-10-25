@@ -1,9 +1,13 @@
 import { circleHits, circleHitsAabb, dist, moveAndSlide } from "./physics.js";
 import {
-  BRAWL_HITS,
-  BRAWL_WINDOW,
+  COMBO_END,
+  COMBO_HITS,
+  COMBO_STEP,
   GRAB_SPEED,
+  HAUL_SLACK,
+  HAUL_SPEED,
   NOISE_RADIUS,
+  bestBody,
   bestBrawl,
   bestStealth,
   facingOf,
@@ -154,8 +158,10 @@ export class Game {
     if (!this.melee) {
       const stealth = bestStealth(p, this.guards);
       const brawl = bestBrawl(p, this.guards);
+      const body = bestBody(p, this.guards);
       if (stealth) this.prompt = { kind: "stealth", guard: stealth };
       else if (brawl) this.prompt = { kind: "brawl", guard: brawl };
+      else if (body) this.prompt = { kind: "body", guard: body };
       if (meleeTap && this.prompt) this.beginMelee(this.prompt);
     } else if (meleeTap) {
       this.meleeStrike();
@@ -265,7 +271,16 @@ export class Game {
 
   beginMelee(prompt) {
     const g = prompt.guard;
-    if (!g || g.down) return;
+    if (!g) return;
+
+    if (prompt.kind === "body") {
+      if (!g.down) return;
+      this.melee = { guard: g, phase: "haul", t: 0 };
+      this.prompt = { kind: "haul", guard: g };
+      return;
+    }
+
+    if (g.down) return;
     g.held = true;
     g.vx = 0;
     g.vy = 0;
@@ -276,12 +291,19 @@ export class Game {
       this.prompt = { kind: "finish", guard: g };
       this.player.lantern = false;
     } else {
-      this.melee = { guard: g, phase: "brawl", t: 0, silent: false, hits: 1 };
-      this.prompt = { kind: "brawl", guard: g };
-      this.shake = 7;
-      this.flash = 0.12;
+      this.melee = { guard: g, phase: "combo", t: 0, silent: false, hits: 0 };
+      this.prompt = { kind: "combo", guard: g };
+      this.comboHit();
       this.noiseAlert(g, NOISE_RADIUS * 0.55);
     }
+  }
+
+  comboHit() {
+    const m = this.melee;
+    if (!m) return;
+    m.hits += 1;
+    this.shake = 5 + m.hits * 1.5;
+    this.flash = 0.09;
   }
 
   meleeStrike() {
@@ -291,11 +313,9 @@ export class Game {
       this.finishTakedown(m, true);
       return;
     }
-    if (m.phase === "brawl") {
-      m.hits += 1;
-      this.shake = 6;
-      this.flash = 0.1;
-      if (m.hits >= BRAWL_HITS) this.finishTakedown(m, false);
+    if (m.phase === "haul") {
+      this.melee = null;
+      this.prompt = null;
     }
   }
 
@@ -320,19 +340,36 @@ export class Game {
       this.prompt = { kind: "finish", guard: g };
       return;
     }
-    if (m.phase === "brawl") {
+    if (m.phase === "combo") {
       p.vx = 0;
       p.vy = 0;
       g.vx = 0;
       g.vy = 0;
-      this.prompt = { kind: "brawl", guard: g };
-      if (m.t >= BRAWL_WINDOW) {
-        this.melee = null;
-        g.held = false;
-        this.status = "dead";
-        this.run.deaths += 1;
-        this.shake = 14;
+      this.prompt = { kind: "combo", guard: g };
+      const due = Math.min(COMBO_HITS, Math.floor(m.t / COMBO_STEP) + 1);
+      while (m.hits < due) this.comboHit();
+      if (m.t >= COMBO_END) this.finishTakedown(m, false);
+      return;
+    }
+
+    if (m.phase === "haul") {
+      p.vx = axis.x * HAUL_SPEED;
+      p.vy = axis.y * HAUL_SPEED;
+      moveAndSlide(p, this.def.walls, dt);
+      const dx = p.x - g.x;
+      const dy = p.y - g.y;
+      const d = Math.hypot(dx, dy);
+      if (d > HAUL_SLACK) {
+        const pull = Math.min((d - HAUL_SLACK) / Math.max(dt, 0.001), HAUL_SPEED * 2);
+        g.vx = (dx / d) * pull;
+        g.vy = (dy / d) * pull;
+        g.facing = Math.atan2(dy, dx);
+        moveAndSlide(g, this.def.walls, dt);
+      } else {
+        g.vx = 0;
+        g.vy = 0;
       }
+      this.prompt = { kind: "haul", guard: g };
     }
   }
 

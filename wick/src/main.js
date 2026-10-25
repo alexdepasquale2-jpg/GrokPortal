@@ -9,23 +9,29 @@ const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 const input = new Input();
 
-const catalog = await Catalog.load();
-const game = new Game(catalog);
-game.touch = false;
-const dev = new Dev(game, catalog, canvas);
-mountTouch(input, game, canvas);
+async function boot() {
+  const catalog = await Catalog.load();
+  const game = new Game(catalog);
+  game.touch = false;
+  const dev = new Dev(game, catalog, canvas);
+  mountTouch(input, game, canvas);
 
-if (new URLSearchParams(location.search).has("playtest")) game.dev.on = false;
+  const params = new URLSearchParams(location.search);
+  if (params.has("playtest")) game.dev.on = false;
+  if (import.meta.env?.PROD && !params.has("dev")) game.dev.on = false;
 
-let last = performance.now();
-function frame(now) {
-  const dt = Math.min(0.05, (now - last) / 1000);
-  last = now;
-  void dev.tick(dt, input);
-  game.update(dt, input);
-  render(ctx, game, canvas);
+  let last = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    void dev.tick(dt, input);
+    game.update(dt, input);
+    render(ctx, game, canvas);
+    requestAnimationFrame(frame);
+  }
   requestAnimationFrame(frame);
 }
-requestAnimationFrame(frame);
+
+void boot();
 
 if (import.meta.hot) import.meta.hot.accept();

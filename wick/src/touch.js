@@ -1,5 +1,14 @@
 const MAX = 48;
 
+const BUTTON = {
+  stealth: "TAKE DOWN",
+  finish: "CHOKE",
+  brawl: "COMBO",
+  combo: "COMBO",
+  body: "DRAG",
+  haul: "DROP",
+};
+
 export function mountTouch(input, game, canvas) {
   const root = document.getElementById("touch");
   const stick = document.getElementById("stick");
@@ -100,10 +109,7 @@ export function mountTouch(input, game, canvas) {
     const prompt = game.prompt;
     root.dataset.takedown = prompt ? "1" : "0";
     root.dataset.kind = prompt?.kind || "";
-    if (prompt) {
-      take.textContent =
-        prompt.kind === "finish" ? "CHOKE" : prompt.kind === "brawl" ? "STRIKE" : "TAKE DOWN";
-    }
+    if (prompt) take.textContent = BUTTON[prompt.kind] || "TAKE DOWN";
     requestAnimationFrame(sync);
   };
   sync();
